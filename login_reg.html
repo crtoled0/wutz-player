@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="css/wutzform.css" />
+<link rel="stylesheet" type="text/css" href="css/clouds.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+<body>
+    
+<div id="clouds">
+	<div class="cloud x1"></div>
+	<!-- Time for multiple clouds to dance around -->
+	<div class="cloud x2"></div>
+	<div class="cloud x3"></div>
+	<div class="cloud x4"></div>
+	<div class="cloud x5"></div>
+</div>
+<!-- Where all the magic happens -->
+<!-- LOGIN FORM -->
+<div id="mainContainer">
+    <div id="loginDiv" class="text-center" style="padding:50px 0">
+	<div class="logo">login</div>
+	<!-- Main Form -->
+	<div class="login-form-1">
+		<form id="login-form" class="text-left">
+			<div class="login-form-main-message"></div>
+			<div class="main-login-form">
+				<div class="login-group">
+					<div class="form-group">
+						<label for="bar_id" class="sr-only">Bar or Event Id</label>
+						<input type="text" class="form-control" id="bar_id" name="bar_id" placeholder="-">
+					</div>
+					<div class="form-group">
+						<label for="pass" class="sr-only">Password</label>
+						<input type="password" class="form-control" id="pass" name="pass" placeholder="-">
+					</div>
+					<div class="form-group login-group-checkbox">
+						<input type="checkbox" id="lg_remember" name="lg_remember">
+						<label for="lg_remember">remember</label>
+					</div>
+				</div>
+				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+			</div>
+			<div class="etc-login-form">
+                            <p>forgot your password? <a href="#" onclick="loadSectionPage('forgotPass');">click here</a></p>
+				<p>new user? <a href="#" onclick="loadSectionPage('subscribe');">create new account</a></p>
+			</div>
+		</form>
+	</div>
+	<!-- end:Main Form -->
+</div>
+
+<!-- REGISTRATION FORM -->
+<div id="newBarDiv" class="text-center" style="padding:50px 0;visibility: hidden;">
+	<div class="logo">register</div>
+	<!-- Main Form -->
+	<div class="login-form-1">
+		<form id="register-form" class="text-left">
+			<div class="login-form-main-message"></div>
+			<div class="main-login-form">
+				<div class="login-group">
+					<div class="form-group">
+						<label for="reg_username" class="sr-only">Email address</label>
+						<input type="text" class="form-control" id="reg_username" name="reg_username" placeholder="username">
+					</div>
+					<div class="form-group">
+						<label for="reg_password" class="sr-only">Password</label>
+						<input type="password" class="form-control" id="reg_password" name="reg_password" placeholder="password">
+					</div>
+					<div class="form-group">
+						<label for="reg_password_confirm" class="sr-only">Password Confirm</label>
+						<input type="password" class="form-control" id="reg_password_confirm" name="reg_password_confirm" placeholder="confirm password">
+					</div>
+					
+					<div class="form-group">
+						<label for="reg_email" class="sr-only">Email</label>
+						<input type="text" class="form-control" id="reg_email" name="reg_email" placeholder="email">
+					</div>
+					<div class="form-group">
+						<label for="reg_fullname" class="sr-only">Full Name</label>
+						<input type="text" class="form-control" id="reg_fullname" name="reg_fullname" placeholder="full name">
+					</div>
+					
+					<div class="form-group login-group-checkbox">
+						<input type="radio" class="" name="reg_gender" id="male" placeholder="username">
+						<label for="male">male</label>
+						
+						<input type="radio" class="" name="reg_gender" id="female" placeholder="username">
+						<label for="female">female</label>
+					</div>
+					
+					<div class="form-group login-group-checkbox">
+						<input type="checkbox" class="" id="reg_agree" name="reg_agree">
+						<label for="reg_agree">i agree with <a href="#">terms</a></label>
+					</div>
+				</div>
+				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+			</div>
+			<div class="etc-login-form">
+				<p>already have an account? <a href="#" onclick="loadSectionPage('login');">login here</a></p>
+			</div>
+		</form>
+	</div>
+	<!-- end:Main Form -->
+</div>
+
+<!-- FORGOT PASSWORD FORM -->
+<div id="forgotPassDiv" class="text-center" style="padding:50px 0;visibility: hidden;">
+	<div class="logo">forgot password</div>
+	<!-- Main Form -->
+	<div class="login-form-1">
+		<form id="forgot-password-form" class="text-left">
+			<div class="etc-login-form">
+				<p>When you fill in your registered email address, you will be sent instructions on how to reset your password.</p>
+			</div>
+			<div class="login-form-main-message"></div>
+			<div class="main-login-form">
+				<div class="login-group">
+					<div class="form-group">
+						<label for="fp_email" class="sr-only">Email address</label>
+						<input type="text" class="form-control" id="fp_email" name="fp_email" placeholder="email address">
+					</div>
+				</div>
+				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+			</div>
+			<div class="etc-login-form">
+				<p>already have an account? <a href="#" onclick="loadSectionPage('login');">login here</a></p>
+				<p>new user? <a href="#" onclick="loadSectionPage('subscribe');">create new account</a></p>
+			</div>
+		</form>
+	</div>
+	<!-- end:Main Form -->
+</div>
+
+
+
+<!-- EDIT BAR -->
+<div id="configDiv" class="text-center" style="padding:50px 0;visibility: hidden;">
+	<div class="logo">Config</div>
+	<!-- Main Form -->
+	<div class="login-form-1">
+		<form id="configDiv-form" class="text-left">
+			<div class="login-form-main-message"></div>
+			<div class="main-login-form">
+				<div class="login-group">
+                                        <div class="form-group">
+                                            <label id="bar_id" class="sr-only"><strong>-Bar-</strong></label>
+					</div>
+                                        <div class="form-group">
+						<label for="songsAllowed" class="sr-only">Songs Allowed</label>
+						<input type="number" class="form-control" id="songsAllowed" name="songsAllowed" placeholder="0">
+					</div>
+					<div class="form-group">
+						<label for="nombreBar" class="sr-only">Bar Name</label>
+						<input type="text" class="form-control" id="nombreBar" name="nombreBar" placeholder="-">
+					</div>
+                                        <div class="form-group">
+						<label for="representante" class="sr-only">Bar Manager</label>
+						<input type="text" class="form-control" id="representante" name="representante" placeholder="-">
+					</div>
+                                        <div class="form-group">
+						<label for="representante" class="sr-only">Phone</label>
+						<input type="text" class="form-control" id="telefono" name="telefono" placeholder="-">
+					</div>
+                                        <div class="form-group">
+						<label for="reg_email" class="sr-only">Email</label>
+						<input type="text" class="form-control" id="email" name="email" placeholder="-">
+					</div>
+                                        <div class="form-group">
+						<label for="dayToken" class="sr-only">Day Token</label>
+						<input type="text" class="form-control" id="dayToken" name="dayToken" placeholder="-">
+					</div>
+                                        <div class="form-group">
+						<label for="desc" class="sr-only">Short Bar Description</label>
+						<input type="text" class="form-control" id="desc" name="desc" placeholder="-">
+					</div>
+					
+				</div>
+                                <div class="etc-login-form">
+                                    <p><a href="#" onclick="loadSectionPage('config2');">Load Catalog</a></p>
+                                    <p><a href="#" onclick="loadSectionPage('config3');">Set Up Bar Location</a></p>
+                                </div>
+				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+			</div>
+		</form>
+	</div>
+	<!-- end:Main Form -->
+</div>
+
+<!-- CONFIG 2 -->
+<div id="config2Div" class="text-center" style="padding:50px 0;visibility: hidden;">
+	<div class="logo">Load Music Catalog</div>
+	<!-- Main Form -->
+	<div class="login-form-1">
+		<form id="config2DivForm" class="text-left">
+			<div class="etc-login-form">
+				<p>Selecciona la carpeta donde tienes tu música. Mientras más ordenada esté la música, mejor y más claro será tu catalogo disponible</p>
+			</div>
+			<div class="login-form-main-message"></div>
+			<div class="main-login-form">
+				<div class="login-group">
+					<div class="form-group">
+						<label for="musicPath" class="sr-only">Select Folder</label>
+						<input type="text" class="form-control" id="musicPath" name="musicPath" />
+						
+					</div>
+				</div>
+                                <div class="etc-login-form">
+                                    <p id="catLoadingBox"></p>
+                                </div>
+				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+			</div>
+		</form>
+	</div>
+	<!-- end:Main Form -->
+</div>
+
+<!-- CONFIG 3 -->
+<div id="config3Div" class="text-center" style="padding:50px 0;visibility: hidden;">
+	<div class="logo">Donde estamos?</div>
+	<!-- Main Form -->
+	<div class="login-form-1">
+		<form id="forgot-password-form" class="text-left">
+			<div class="etc-login-form">
+				<p>Selecciona la ubicación geografica donde se encuentra tu bar o evento.</p>
+			</div>
+			<div class="login-form-main-message"></div>
+			<div class="main-login-form">
+				<div class="login-group">
+					<div class="form-group">
+						<label for="fp_email" class="sr-only">Email address</label>
+						<input type="text" class="form-control" id="fp_email" name="fp_email" placeholder="email address">
+					</div>
+				</div>
+				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+			</div>
+		</form>
+	</div>
+	<!-- end:Main Form -->
+</div>
+
+</div>
+<script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/knockout-3.4.0.js"></script>
+<script type="text/javascript" src="js/wutzLocalAdmin.js"></script>
+</body>
+</html>

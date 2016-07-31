@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Wutz Player</title>
+
+    <!-- link rel="stylesheet" href="./css/jquery.flipster.min.css" -->
+    <!-- link rel="stylesheet" href="./css/styles.css" -->
+    <link rel="stylesheet" href="carousel-3d/dist/styles/jquery.carousel-3d.default.css">
+    <link rel="stylesheet" type="text/css" href="css/wutz.css" />
+    <link rel="stylesheet" type="text/css" href="css/clouds.css" />
+
+</head>
+<body>
+
+<div id="clouds">
+	<div class="cloud x1"></div>
+	<!-- Time for multiple clouds to dance around -->
+	<div class="cloud x2"></div>
+	<div class="cloud x3"></div>
+	<div class="cloud x4"></div>
+	<div class="cloud x5"></div>
+</div>
+<!-- Thats the markup! -->
+<!-- That looks cool. We are done!! -->    
+<div id="mainContainer">
+        <!--div id="audioContainer"></div -->
+        <section class='wrapper'>
+            <div data-carousel-3d>
+
+            </div>
+        </section>
+        <div style="display: none" id="cleanCarousel" data-bind="foreach: { data: playList, as: 'song' }">
+            <div class="songContain" data-bind="attr:{'id': 'cont_'+song.songid}">
+                <img class="backImage"  src="./img/fronts/defaultSong.png" />
+                <img class="mainImg" src="./img/fronts/defaultSong.png" />
+                
+                <div class="songInfo">
+                    <h2 class="infoSec">Artist:</h2><h2 class="sliderCol"><span data-bind="html:song.artist"></span></h2>
+                    <h2 class="infoSec">Album:</h2><h2 class="sliderCol"><span class="marquee" data-bind="html:song.album"></span></h2>
+                    <h2 class="infoSec">Song:</h2><h2 class="sliderCol"><span class="marquee" data-bind="html:song.name"></span></h2>
+                </div>
+            </div>
+        </div>
+        <section class="qrInfoSection">
+            <div>
+                <img id="qrAppImg" src="" /><br/>
+            </div>
+            
+        </section>
+        <section class="playListSection">
+          <table class="bordered">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Song</th>
+            </tr>
+            </thead>
+            <tbody id="playList" data-bind="foreach: { data: playList, as: 'song' }">
+                 <tr class="">
+                     <td>
+                         <input type="hidden" id="songId" data-bind="attr: {'value':song.songid}" />
+                         <p data-bind="html:song.htmlAudioObject"></p>
+                     </td>
+                     <td data-bind="html:song.artist"></td>
+                     <td class="sliderCol"><span data-bind="html:song.album"></span></td>
+                     <td class="sliderCol"><span data-bind="html:song.name"></span></td>
+                </tr>
+            </tbody>
+        </table>
+      </section>
+</div>
+
+<script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>
+<script src="js/jquery.resize.js"></script>
+<script src="js/jquery.waitforimages.js"></script>
+<script src="js/modernizr.js"></script>
+<script id="carouselImp" src="carousel-3d/dist/jquery.carousel-3d.js"></script>
+<script type="text/javascript" src="js/knockout-3.4.0.js"></script>
+<script type="text/javascript" src="js/textSlider.js"></script>
+<script type="text/javascript" src="js/wutzPlayerManager.js"></script>
+  
+<!-- script src="./js/jquery.flipster.min.js"></script -->
+<!-- script src="./js/script.js"></script -->
+</body>
+</html>

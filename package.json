@@ -4,9 +4,9 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
+    "winston": "2.2.0",
     "id3-parser": "^1.0.2",
-    "pretty-bytes": "^2.0.1",
-    "restler":"3.4.0"
+    "request":"^2.74.0"
   },
   "devDependencies": {
     "electron-prebuilt": "^0.35.6"

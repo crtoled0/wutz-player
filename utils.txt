@@ -1,0 +1,41 @@
+
+<iframe 
+	width="425" 
+	height="350" 
+	frameborder="0" 
+	scrolling="no" 
+	marginheight="0" 
+	marginwidth="0" 
+	src="https://maps.google.co.uk/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=new+york&amp;aq=&amp;sll=53.546224,-2.106543&amp;sspn=0.02453,0.084543&amp;ie=UTF8&amp;hq=&amp;hnear=New+York,+United+States&amp;t=m&amp;z=10&amp;iwloc=A&amp;output=embed">
+</iframe>
+
+
+m="+barDet.lat+","+barDet.lon
+
+
+https://ccadmin-z00a.oracleoutsourcing.com/product/courP_3450
+
+
+
+
+
+keytool -genkey -v -keystore myCertificate.keystore -alias wutzKey -keyalg RSA -keysize 2048 -validity 20000
+
+keytool -export -keystore myCertificate.keystore -alias wutz -file WutzCert.keystore
+
+keytool -genkey -v -keystore myCertificate.keystore -alias wutzKey -keyalg RSA -keysize 2048 -validity 10000
+
+keytool -export -keystore myCertificate.keystore -alias wutzKey -file wutzKey.keystore
+
+
+keytool -export -keystore wutzKeystore.jks -alias wutzKey -file wutzKey.keystore
+
+jarsigner -keystore wutzKeystore.jks -storepass PASSWORD Wutz.apk wutzKey
+
+
+
+---------------------------------------------------------------------------------------------------
+electron-packager ../WutzPlayer --platform=win32 --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)"
+
+
+rimraf node_modules

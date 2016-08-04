@@ -2,12 +2,13 @@ var fs = require('fs');
 var ID3 = require('id3-parser');
 var stream = require('stream');
 var os = require('os');
+//var logger = require('./log4Wutz');
 
  var homePath = os.homedir()+"/.wutz";
 
 /**
 exports.getAndLoadSong = function(song) {
-  //console.log('Started');
+  //logger.info('Started');
   var filPath = song.file_path;
   var filName = song.file_name;  
   var songPath = filPath+"/"+filName;
@@ -47,13 +48,13 @@ exports.loadFrontAlbumPic = function(song, callback){
     if(song.album){
         var possImg = homePath+"/img/fronts/"+song.album;
         if (fs.existsSync(possImg+".jpg")) {
-            console.log('Found file');
+           // logger.info('Found file');
             song.pic = possImg+".jpg";
             callback(song);
             return;
         }
         else if (fs.existsSync(possImg+".png")) {
-            console.log('Found file');
+          //  logger.info('Found file');
             song.pic = possImg+".png";
             callback(song);
             return;
@@ -67,14 +68,14 @@ exports.loadFrontAlbumPic = function(song, callback){
            // callback(song);
             return;
         }
-        console.log(tag);
+        //logger.info(tag);
         var mime = tag.image.mime;
         var picExt = mime==="image/png"?"png":"jpg";
         var picPathName = homePath+"/img/fronts/"+tag.album+"."+picExt;
         song.pic = picPathName;
         
         if (fs.existsSync(picPathName)) {
-            console.log('Found file');
+            //logger.info('Found file');
             callback(song);
             return;
         }
@@ -88,10 +89,10 @@ exports.loadFrontAlbumPic = function(song, callback){
             
             fs.appendFile(picPathName, new Buffer(tag.image.data), function (err) {
                 if (err) {
-                  console.log(err);
+                 // logger.info(err);
                 } else {
-                  console.log("File Size "+ tag.image.data.length);
-                  console.log("File Created");
+                  //logger.info("File Size "+ tag.image.data.length);
+                  //logger.info("File Created");
                   callback(song);
                 }
             });

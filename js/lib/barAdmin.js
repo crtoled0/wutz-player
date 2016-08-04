@@ -3,16 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+var logger = require('./log4Wutz');
 var os = require('os');
-var rest = require('restler');
+var app2WutzAdm = require("./app2wutzAdm");
 var fs = require('fs');
 
 var sep = os.platform()==="win32"?"\\":"/";
 var wutzEdidFsPath = os.homedir()+sep+".wutz";
+window.sessionStorage.setItem("homePath",wutzEdidFsPath);
+
 var configPath = wutzEdidFsPath+sep+"json/config.json";
 var catalogPath = wutzEdidFsPath+sep+"json/catalog.json";
-    
+
+
+
 var serverConfMapp = {"desc": "desc",
                       "email": "email",
                       "id": "bar_id",
@@ -28,7 +32,7 @@ var confTemplate = {"bar_id":"",
                     "catid":"",
                     "musicPath":"",
                     "separator":sep,
-                    "serverhost":"http://wutz.co.uk",
+                    "serverhost":"http://wutznet.com",
                     "localProwser":"/bwclient/index.html",
                     "androidAppURL":"/apps/Wutz.apk",
                     "downloadAppURL":"https://build.phonegap.com/apps/2149695",
@@ -47,21 +51,28 @@ var confTemplate = {"bar_id":"",
     
 var login = function(authAcc,callback) {  
   
-  rest.postJson('http://wutz.co.uk/delegate/wzDelServ2Serv.php?fnc=auth', authAcc).on('complete', function(data) {
-      // console.log("He volvido ");  
-        callback(data);
+  logger.info("Going to login "+JSON.stringify( authAcc ));
+  
+  app2WutzAdm.goPost("login",authAcc, function(result){
+      console.log("I'm back ["+result.logged+"]");
+      callback(result);
   });
 };
 
+
 var register = function(conf,callback) {
-  rest.postJson('http://wutz.co.uk/delegate/registerBar.php', conf).on('complete', function(data) {
-          callback(data);
+    
+  app2WutzAdm.goPost("registerBar",conf, function(result){
+      console.log("I'm back ["+result+"]");
+      callback(result);
   });
 };
 
 var saveConf = function(conf,callback) {
-  rest.postJson('http://wutz.co.uk/delegate/uploadLocalCatalog.php', conf).on('complete', function(data) {
-          callback(data);
+  
+    app2WutzAdm.goPost("uploadLocalCatalog",conf, function(result){
+      console.log("I'm back ["+result+"]");
+      callback(result);
   });
 };
 
@@ -69,30 +80,26 @@ var saveConfigFile = function(conf,callback) {
       fs.createWriteStream(configPath);
       fs.appendFile(configPath, JSON.stringify(conf), function (err) {
                     if (err) {
-                      console.log(err);
+                      logger.info(err);
                       return
                     } 
-                    console.log("Config Edited");
+                    logger.info("Config Edited");
                     callback(conf);
            });
 };
 
 
-
 var loadNeededFiles = function(callback){
+    
     console.log("Loading Conf File");
     var config = null; 
-    var existCat = false;
+    var existCat = true;
     var currBar  = window.sessionStorage.getItem("currBar");
    // var loggedIn  = window.sessionStorage.getItem("logged");
-    
-    if (fs.existsSync(catalogPath)) {
-        existCat = true;
-    }
-    
-    if (!isFirstTime() && fs.existsSync(configPath)) {
+    if (fs.existsSync(configPath)) {
            
            config =  JSON.parse(fs.readFileSync(configPath));
+           
            if(config.catid === "")
                existCat = false;
            if(currBar === config.bar_id){
@@ -121,27 +128,12 @@ var loadNeededFiles = function(callback){
     }
 };
 
-var isFirstTime = function(){
-    
-    if (!fs.existsSync(wutzEdidFsPath)){
-        fs.mkdirSync(wutzEdidFsPath);
-        fs.mkdirSync(wutzEdidFsPath+sep+"json");
-        fs.mkdirSync(wutzEdidFsPath+sep+"img");
-        fs.mkdirSync(wutzEdidFsPath+sep+"img"+sep+"fronts");
-        return true;
-    }
-    window.sessionStorage.setItem("homePath",wutzEdidFsPath);
-    return false;
-};
 
 var loadBarFromWutzServer = function(currBar, callback){
-  console.log("Getting Bar Info..");
-  rest.get('http://wutz.co.uk/delegate/wutzDelegMan.php?fnc=getBarDetails&barId='+currBar).on('complete', function(result) {
-        if (result instanceof Error) {
-          console.log('Error:', result.message);
-          this.retry(5000); // try again after 5 sec
-        } else {
-          console.log(result);
+  logger.info("Getting Bar Info..");
+  
+  app2WutzAdm.goGet("getBar/"+currBar,function(result){
+      logger.info(result);
           
           var newGuid = generateUUID();
           var newConf = confTemplate;
@@ -151,17 +143,14 @@ var loadBarFromWutzServer = function(currBar, callback){
           for(var key in serverConfMapp){
               var confAtt = serverConfMapp[key];
               newConf[confAtt] = result[key];
-                //console.log(attributename+": "+myobject[attributename]);
+                //logger.info(attributename+": "+myobject[attributename]);
           }
           
           saveConfigFile(newConf,function(setCfig){
               callback(setCfig);
           });
-        }
-    });
+  });
 };
-
-
 
 var generateUUID = function(){
     var d = new Date().getTime();

@@ -2,6 +2,9 @@ var fs = require('fs');
 var path = require('path');
 var id3 = require('id3-parser');
 var os = require('os');
+
+var logger = require('../lib/log4Wutz');
+
 var walkMP3 = function(dir, done) {
   var results = [];
   fs.readdir(dir, function(err, list) {
@@ -55,7 +58,8 @@ var walkIMG = function(dir, done) {
   });
 };
 
-console.log("LOADING CATALOG ...");
+//console.log("LOADING CATALOG ...");
+logger.info("LOG FROM PROCESS");
  var homePath = os.homedir()+"/.wutz";
 var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
   var musPath = config.musicPath;
@@ -66,7 +70,7 @@ var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
 
    walkMP3(musPath, function(err, results) {
         
-        console.log("Looping Folders");
+      //  console.log("Looping Folders");
         if (err) throw err;
         
         for(var i=0;i< results.length;i++){
@@ -127,13 +131,15 @@ var getArrayMd3 = function(index, total){
                         songList[index].songName = songList[index].songName.replace(".mp3","");
                         songList[index].track = res.track?res.track:"";
                         songList[index].pic = "";
-                        
+
+                        //logger.info(JSON.stringify({"perc":perc,"song":songList[index].songName}));
                         console.log(JSON.stringify({"perc":perc,"song":songList[index].songName}));
                         
                         walkIMG(songList[index].songPath, function(err, results) {
                             if (err) {
                                 //throw err
-                                console.log({"error":err});
+                                //logger.info(JSON.stringify({"error":err}));
+                                console.log(JSON.stringify({"error":err}));
                                 return ;
                             };
                             try {
@@ -145,7 +151,8 @@ var getArrayMd3 = function(index, total){
                                 }
                             }
                             catch(err) {
-                                console.log({"error":err.message});
+                            //    logger.info(JSON.stringify({"error":err}));
+                                console.log(JSON.stringify({"error":err}));
                             }
                             finally{
                                 res = null;
@@ -163,7 +170,14 @@ var getArrayMd3 = function(index, total){
        cat2Save.songs = songList;
        
        fs.writeFile(homePath+"/json/catalog.json", JSON.stringify(cat2Save),function(err){
-            if(err){console.log(err);} else {console.log(JSON.stringify({"done":true}));}
+            if(err){
+              //  logger.info(JSON.stringify({"error":err}));
+                console.log(JSON.stringify({"error":err}));
+            } 
+            else {
+              //  logger.info(JSON.stringify({"done":true}));
+                console.log(JSON.stringify({"done":true}));
+            }
        });
        return;
     }

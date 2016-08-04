@@ -10,11 +10,13 @@ function AppViewModel() {
 //Start checking audio
 var config = null;
 var homePath = window.sessionStorage.getItem("homePath");
+var logger = require('./js/lib/log4Wutz');
+
 $(document).ready(function() {
     
     $.getJSON( homePath+"/json/config.json", function(_config) {
         
-        var qrUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+_config.downloadAppURL+Math.random();
+        var qrUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+_config.downloadAppURL+"&v="+Math.random();
         $("#qrAppImg").attr("src",qrUrl);
         config = _config;
         var params = {};
@@ -25,7 +27,7 @@ $(document).ready(function() {
         $.ajax({
 		type: 'POST',
 		dataType: 'json',
-                url: config.serverhost+"/delegate/wzDelServ2Serv.php?fnc=rescuePendingList",
+                url: config.serverhost+"/rescuePendingList",
 		data: params,
 		success: function (result) {
 			mainMod.loadFullCatalog();
@@ -35,7 +37,7 @@ $(document).ready(function() {
                         }, 10000 );
 		},
 		error: function (xhr, txtStat, errThrown) {
-			console.log(xhr.status+':::'+txtStat+':::'+errThrown);
+			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
 		}
        });
     });
@@ -55,16 +57,16 @@ this.loadAndPlayRandomSong = function(){
        $.ajax({
 		type: 'POST',
 		dataType: 'json',
-		url: config.serverhost+"/delegate/wzDelServ2Serv.php?fnc=addSongToQueue",
+		url: config.serverhost+"/addSongToQueue",
 		data: params,
 		success: function (result) {
 			if(result.added !== "OK")
                         {
-                            console.log("Falla al cargar tema random");
+                            logger.info("Falla al cargar tema random");
                         }
 		},
 		error: function (xhr, txtStat, errThrown) {
-			console.log(xhr.status+':::'+txtStat+':::'+errThrown);
+			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
 		}
       });
 };
@@ -76,7 +78,7 @@ this.loadAndPlaySong = function(song){
     mainMod.songChecker($("#"+song.songid).get(0));
     //mainMod.loadAndPlaySongReturn(song);
     }catch(err){
-        console.log(err);
+        logger.info(err);
         mainMod.goNextQueue();
     }
 };
@@ -97,7 +99,7 @@ this.songChecker = function(audioMedia){
         if(audioMedia.ended)
         {
             clearInterval ( inter );
-            console.log("Song Ended");
+            logger.info("Song Ended");
             if(mainMod.playList().length > 0)
                 mainMod.goNextQueue();
             else{
@@ -145,16 +147,16 @@ this.removeSongFromPlaylist= function(songid,clientGuid){
     $.ajax({
 		type: 'POST',
 		dataType: 'json',
-		url: config.serverhost+"/delegate/wzDelServ2Serv.php?fnc=unqueueSong",
+		url: config.serverhost+"/unqueueSong",
 		data: params,
 		success: function (result) {
                        if(result)
-                            console.log("LastSongRem");
+                            logger.info("LastSongRem");
                        else
-                           console.log("NoSongRemoved");
+                           logger.info("NoSongRemoved");
 		},
 		error: function (xhr, txtStat, errThrown) {
-			console.log(xhr.status+':::'+txtStat+':::'+errThrown);
+			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
 		}
       });
 };
@@ -177,7 +179,7 @@ this.loadFullCatalog = function(){
       $.ajax({
 		type: 'POST',
 		dataType: 'json',
-		url: config.serverhost+"/delegate/wzDelServ2Serv.php?fnc=getFullCatalog",
+		url: config.serverhost+"/getFullCatalog",
 		data: params,
 		success: function (result) {
 			mainMod.loadFullCatalogReturn(result);

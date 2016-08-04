@@ -5,6 +5,8 @@
     var config = null;
     var bAdm = require('./js/lib/barAdmin');
     var catAdm = require("./js/lib/catalogTools");
+
+    var logger = require('./js/lib/log4Wutz');
 	// Options for Message
 	//----------------------------------------------
   var options = {
@@ -13,7 +15,9 @@
 	  'btn-error': '<i class="fa fa-remove"></i>',
 	  'msg-login-success': 'Good ... Loading Bar',
 	  'msg-login-error-pass': 'Password incorrect',
-          'msg-login-error-usr': "User doesn't exist"
+          'msg-login-error-usr': "User doesn't exist",
+          'msg-catload-success': 'The catalog was uploaded correctly',
+          'msg-catload-error': 'Catalog update failed' 
   };	// Login Form
 	//----------------------------------------------
 	// Validation
@@ -26,6 +30,44 @@
   });
   
 	// Form Submission
+ 
+  $("#login-form").submit(function() {
+  	remove_loading($("#login-form"));
+        var currForm = $(this);
+                    if(currForm.valid()){
+                        form_loading(currForm);
+                        var params = {};
+                        params.barid = currForm.find("#bar_id").val();
+                        params.pass = currForm.find("#pass").val();
+                        window.sessionStorage.setItem("currBar",params.barid);
+                        //logger.info($(this).find("#bar_id").val());
+                        console.log("Calling Ajax Login");
+                        bAdm.login(params,function(result){
+                            console.log("Back from Login");
+                            remove_loading($(currForm));
+                            console.log(result);
+                            if(result.logged){
+                                logger.info("Logged In");
+                                window.sessionStorage.setItem("logged",true);
+                                form_success($(currForm),'msg-login-success');
+                                checkBarStatusStatus();
+                            }
+                            else if(result.msg === "usr_no_exist"){
+                                form_failed($(currForm),'msg-login-error-usr');
+                                window.sessionStorage.setItem("logged",false);
+                            }
+                            else{
+                                form_failed($(currForm),'msg-login-error-pass');
+                                window.sessionStorage.setItem("logged",false);
+                            }
+                        });
+                    }
+      return false;
+  });
+  
+  
+ /**
+ 
   $("#login-form").submit(function() {
   	//remove_loading($(this));
         var currForm = $(this);
@@ -35,27 +77,41 @@
                         params.barid = currForm.find("#bar_id").val();
                         params.pass = currForm.find("#pass").val();
                         window.sessionStorage.setItem("currBar",params.barid);
-                        //console.log($(this).find("#bar_id").val());
-                        bAdm.login(params,function(result){
-                            remove_loading(currForm);
-                            if(result.logged){
-                                console.log("Logged In");
-                                window.sessionStorage.setItem("logged",true);
-                                form_success(currForm,'msg-login-success');
-                                checkBarStatusStatus();
-                            }
-                            else if(result.msg === "usr_no_exist"){
-                                form_failed(currForm,'msg-login-error-usr');
-                                window.sessionStorage.setItem("logged",false);
-                            }
-                            else{
-                                form_failed(currForm,'msg-login-error-pass');
-                                window.sessionStorage.setItem("logged",false);
-                            }
+                        //logger.info($(this).find("#bar_id").val());
+                        console.log("Calling Ajax Login");
+                        params = JSON.stringify(params);
+                        
+                        $.ajax({
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    url: "http://wutz.co.uk/login",
+                                    data: params,
+                                    success: function (result) {
+                                            console.log("Back from Login");
+                                            //  remove_loading(currForm);
+                                            if(result.logged){
+                                                  console.log("Logged In");
+                                                  window.sessionStorage.setItem("logged",true);
+                                                  form_success(currForm,'msg-login-success');
+                                                  checkBarStatusStatus();
+                                            }
+                                            else if(result.msg === "usr_no_exist"){
+                                                  form_failed(currForm,'msg-login-error-usr');
+                                                  window.sessionStorage.setItem("logged",false);
+                                            }
+                                            else{
+                                                  form_failed(currForm,'msg-login-error-pass');
+                                                  window.sessionStorage.setItem("logged",false);
+                                            }
+                                    },
+                                    error: function (xhr, txtStat, errThrown) {
+                                            console.log(xhr.status+':::'+txtStat+':::'+errThrown);
+                                    }
                         });
                     }
       return false;
   });
+   **/ 
 	
 	// Register Form
 	//----------------------------------------------
@@ -131,33 +187,40 @@
 		}
   });
  $("#configDiv form").submit(function() {
-  	remove_loading($(this));
-        form_loading($(this));
+  	remove_loading($("#configDiv form"));
+        form_loading($("#configDiv form"));
 	if(!catLoaded){
-            loadSectionPage("config2");
+            //loadSectionPage("config2");
+            remove_loading($("#configDiv form"));
+            form_failed($("#configDiv form"), "Catalog is not loaded<br/>");
+            return false;
+            
         }
         else if(config.latitude === "" || config.longitute===""){
-            loadSectionPage("config3");
+            //loadSectionPage("config3");
+            remove_loading($("#configDiv form"));
+            form_failed($("#configDiv form"), "Bar Location not specified<br/>");
+            return false;
         }
-        else{
-            document.location.href="./player.html";
-        }
+        remove_loading($("#configDiv form"));
+        document.location.href="./player.html";
+        
   	return false;
 		
   });
   
   $("#config2Div form").submit(function() {
   	
-        var form = $(this);
-        remove_loading(form);
-        form_loading(form);
-       // console.log($("#musicPath"));
+       // var form = $(this);
+        remove_loading($("#config2Div form"));
+        form_loading($("#config2Div form"));
+       // logger.info($("#musicPath"));
 	var musPath = $("#musicPath").val();
         config.musicPath = musPath;
         bAdm.saveConfigFile(config,function(_config){
             config = _config;
             catAdm.getCatalogFromFileSystem(function(loadMsg){
-                console.log(loadMsg);
+               // logger.info(loadMsg);
                 try{
                     var onGoingloadMsg = JSON.parse(loadMsg);
                     if(!onGoingloadMsg.done){
@@ -167,10 +230,10 @@
                     }
                     else{
                         $("#catLoadingBox").html("Local Catalog Loaded"); 
-                        remove_loading(form);
+                        remove_loading($("#config2Div form"));
                     }
                 }catch(err){
-                    console.log(err);
+                    //logger.info(err);
                 }
             },function(){ //Finish Creating Local Catalog
                 
@@ -178,8 +241,9 @@
                 catAdm.sendCat2WutzCloud(function(_config){
                     config = _config;
                     $("#catLoadingBox").html("Process Finished"); 
-                    remove_loading(form);
-                    loadSectionPage('config1');
+                    remove_loading($("#config2Div form"));
+                    checkBarStatusStatus();
+                  //  loadSectionPage('config');
                 });
             });
         });
@@ -188,27 +252,41 @@
   });
 	// Loading
 	//----------------------------------------------
-  function remove_loading($form)
-  {
-  	$form.find('[type=submit]').removeClass('error success');
-  	$form.find('.login-form-main-message').removeClass('show error success').html('');
+  function remove_loading(fform){
+  	fform.find('[type=submit]').removeClass('error success');
+  	fform.find('.login-form-main-message').removeClass('show error success').html('');
   }
 
-  function form_loading($form)
-  {
-    $form.find('[type=submit]').addClass('clicked').html(options['btn-loading']);
+  function form_loading(fform){
+    fform.find('[type=submit]').addClass('clicked').html(options['btn-loading']);
   }
   
-  function form_success($form, msg)
-  {
-	  $form.find('[type=submit]').addClass('success').html(options['btn-success']);
-	  $form.find('.login-form-main-message').addClass('show success').html(options[msg]);
+  function form_success(fform, msg){
+      
+      var msg2disp;
+       if(options[msg]===undefined){
+           msg2disp = msg;
+       }
+       else{
+           msg2disp = options[msg];
+       }
+      
+	  fform.find('[type=submit]').addClass('success').html(options['btn-success']);
+	  fform.find('.login-form-main-message').addClass('show success').html(msg2disp);
   }
 
-  function form_failed($form, msg)
-  {
-  	$form.find('[type=submit]').addClass('error').html(options['btn-error']);
-  	$form.find('.login-form-main-message').addClass('show error').html(options[msg]);
+  function form_failed(fform, msg){
+      
+      var msg2disp;
+       if(options[msg]===undefined){
+           msg2disp = msg;
+       }
+       else{
+           msg2disp = options[msg];
+       }
+      
+  	fform.find('[type=submit]').addClass('error').html(options['btn-error']);
+  	fform.find('.login-form-main-message').addClass('show error').html(msg2disp);
   }
 
 	// Dummy Submit Form (Remove this)
@@ -229,6 +307,7 @@
   //-- INT FUNCTIONS 
   function checkBarStatusStatus(){
       
+      console.log("checkstatusbar");
       bAdm.loadNeededFiles(function(_config,isCatLoaded){
           config = _config;
           catLoaded = isCatLoaded;
@@ -262,9 +341,10 @@
   }
   
   $(document).ready(function() {
-      if(window.sessionStorage.getItem("logged")){
+      
+      if(window.sessionStorage.getItem("logged"))
           checkBarStatusStatus();
-      }
+     // }
   });
   
   

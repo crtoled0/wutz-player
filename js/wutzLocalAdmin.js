@@ -21,7 +21,7 @@
   };	// Login Form
 	//----------------------------------------------
 	// Validation
-  $("#login-form").validate({
+  $("#loginDiv form").validate({
   	rules: {
           bar_id: "required",
   	  pass: "required"
@@ -31,8 +31,8 @@
   
 	// Form Submission
  
-  $("#login-form").submit(function() {
-  	remove_loading($("#login-form"));
+  $("#loginDiv form").submit(function() {
+  	remove_loading($("#loginDiv form"));
         var currForm = $(this);
                     if(currForm.valid()){
                         form_loading(currForm);
@@ -49,15 +49,15 @@
                             if(result.logged){
                                 logger.info("Logged In");
                                 window.sessionStorage.setItem("logged",true);
-                                form_success($(currForm),'msg-login-success');
                                 checkBarStatusStatus();
+                                form_success(currForm,'msg-login-success');
                             }
                             else if(result.msg === "usr_no_exist"){
-                                form_failed($(currForm),'msg-login-error-usr');
+                                form_failed(currForm,'msg-login-error-usr');
                                 window.sessionStorage.setItem("logged",false);
                             }
                             else{
-                                form_failed($(currForm),'msg-login-error-pass');
+                                form_failed(currForm,'msg-login-error-pass');
                                 window.sessionStorage.setItem("logged",false);
                             }
                         });
@@ -66,99 +66,61 @@
   });
   
   
- /**
- 
-  $("#login-form").submit(function() {
-  	//remove_loading($(this));
-        var currForm = $(this);
-                    if(currForm.valid()){
-                        form_loading(currForm);
-                        var params = {};
-                        params.barid = currForm.find("#bar_id").val();
-                        params.pass = currForm.find("#pass").val();
-                        window.sessionStorage.setItem("currBar",params.barid);
-                        //logger.info($(this).find("#bar_id").val());
-                        console.log("Calling Ajax Login");
-                        params = JSON.stringify(params);
-                        
-                        $.ajax({
-                                    type: 'POST',
-                                    dataType: 'json',
-                                    url: "http://wutz.co.uk/login",
-                                    data: params,
-                                    success: function (result) {
-                                            console.log("Back from Login");
-                                            //  remove_loading(currForm);
-                                            if(result.logged){
-                                                  console.log("Logged In");
-                                                  window.sessionStorage.setItem("logged",true);
-                                                  form_success(currForm,'msg-login-success');
-                                                  checkBarStatusStatus();
-                                            }
-                                            else if(result.msg === "usr_no_exist"){
-                                                  form_failed(currForm,'msg-login-error-usr');
-                                                  window.sessionStorage.setItem("logged",false);
-                                            }
-                                            else{
-                                                  form_failed(currForm,'msg-login-error-pass');
-                                                  window.sessionStorage.setItem("logged",false);
-                                            }
-                                    },
-                                    error: function (xhr, txtStat, errThrown) {
-                                            console.log(xhr.status+':::'+txtStat+':::'+errThrown);
-                                    }
-                        });
-                    }
-      return false;
-  });
-   **/ 
+
 	
 	// Register Form
 	//----------------------------------------------
 	// Validation
-  $("#register-form").validate({
+  $("#newBarDiv form").validate({
   	rules: {
-      reg_username: "required",
-  	  reg_password: {
-  			required: true,
-  			minlength: 5
-  		},
-   		reg_password_confirm: {
-  			required: true,
-  			minlength: 5,
-  			equalTo: "#register-form [name=reg_password]"
-  		},
-  		reg_email: {
-  	    required: true,
-  			email: true
-  		},
-  		reg_agree: "required",
-    },
+            barId: "required",
+            pass: {required: true,
+                         minlength: 5
+            },
+            rep_password: {required: true,
+                           minlength: 5,
+                           equalTo: "#newBarDiv form [name=pass]"
+            },
+            email: {required: true,
+                    email: true
+            }
+          },
 	  errorClass: "form-invalid",
 	  errorPlacement: function( label, element ) {
-	    if( element.attr( "type" ) === "checkbox" || element.attr( "type" ) === "radio" ) {
-    		element.parent().append( label ); // this would append the label after all your checkboxes/labels (so the error-label will be the last element in <div class="controls"> )
-	    }
-			else {
-  	  	label.insertAfter( element ); // standard behaviour
-  	  }
-    }
+                if( element.attr( "type" ) === "checkbox" || element.attr( "type" ) === "radio" ) {
+                    element.parent().append( label ); // this would append the label after all your checkboxes/labels (so the error-label will be the last element in <div class="controls"> )
+                }
+                else {
+                    label.insertAfter( element ); // standard behaviour
+                }
+          }
   });
 
   // Form Submission
-  $("#register-form").submit(function() {
-  	remove_loading($(this));
-		
-		if(options['useAJAX'] == true)
-		{
-			// Dummy AJAX request (Replace this with your AJAX code)
-		  // If you don't want to use AJAX, remove this
-  	  dummy_submit_form($(this));
-		
-		  // Cancel the normal submission.
-		  // If you don't want to use AJAX, remove this
-  	  return false;
-		}
+  $("#newBarDiv form").submit(function() {
+  	remove_loading($("#newBarDiv form"));
+	form_loading($("#newBarDiv form"));
+        var currForm = $("#newBarDiv form");
+        var loginForm = $("#loginDiv form");
+        
+        var params = {};
+        params.bar_id = currForm.find("#barId").val();
+        params.pass = currForm.find("#pass").val();
+        params.nombreBar = currForm.find("#nombreBar").val();
+        params.email = currForm.find("#email").val();
+        
+        bAdm.register(params,function(result){
+            
+            remove_loading($("#newBarDiv form"));
+            if(result.OK){
+                form_success(loginForm,'Subscribed succesfully, login now');
+                loadSectionPage('login');
+            }
+            else{
+                form_failed(currForm,'Not able to register');
+            }
+        });
+	return false;
   });
 
 	// Forgot Password Form
@@ -166,7 +128,7 @@
 	// Validation
   $("#forgot-password-form").validate({
   	rules: {
-      fp_email: "required",
+      fp_email: "required"
     },
   	errorClass: "form-invalid"
   });
@@ -175,7 +137,7 @@
   $("#forgot-password-form").submit(function() {
   	remove_loading($(this));
 		
-		if(options['useAJAX'] == true)
+		if(options['useAJAX'] === true)
 		{
 			// Dummy AJAX request (Replace this with your AJAX code)
 		  // If you don't want to use AJAX, remove this
@@ -203,11 +165,31 @@
             return false;
         }
         remove_loading($("#configDiv form"));
-        document.location.href="./player.html";
         
+        bAdm.saveConf(config,function(result){
+            if(result.OK){
+                logger.info("Config Changes Applied on server");
+            }
+            else{
+                logger.info("Config Changes Not Saved on server, or no changes");
+            }
+            document.location.href="./player.html";
+        });
   	return false;
 		
   });
+  
+  $("#config2Div form #pickFolder").click(function(){
+      var remote = require('remote');
+      var dialog = remote.require('electron').dialog;
+      var path = dialog.showOpenDialog({
+            properties: ['openDirectory']
+      });
+      
+      console.log(path[0]);
+      $("#musicPath").val(path[0]);
+  });
+  
   
   $("#config2Div form").submit(function() {
   	
@@ -219,6 +201,7 @@
         config.musicPath = musPath;
         bAdm.saveConfigFile(config,function(_config){
             config = _config;
+            $("#catLoadingBox").html("Reading folder, this might take a while ...");
             catAdm.getCatalogFromFileSystem(function(loadMsg){
                // logger.info(loadMsg);
                 try{
@@ -249,6 +232,29 @@
         });
   	return false;
 		
+  });
+  
+  var newLat = "";
+  var newLon = "";
+  $("#config3Div form button").click(function() {
+     // return false;
+    console.log("Submitted ?");
+    if(newLat !== "" && newLon !== ""){
+        remove_loading($("#config3Div form"));
+        form_loading($("#config3Div form"));
+         config.latitude = newLat;
+         config.longitute = newLon;
+         bAdm.saveConfigFile(config,function(_config){
+             remove_loading($("#config3Div form"));
+             config = _config;
+             console.log("Config Saved Locally");
+             loadSectionPage('config1');
+         });
+     }
+     else{
+         return false;
+     }
+      return false;
   });
 	// Loading
 	//----------------------------------------------
@@ -310,6 +316,12 @@
       console.log("checkstatusbar");
       bAdm.loadNeededFiles(function(_config,isCatLoaded){
           config = _config;
+          
+          if(config.latitude!=="" && config.longitute!=="")
+              showPosition(config.latitude, config.longitute);
+          else
+              getLocationsMap();
+          
           catLoaded = isCatLoaded;
           $.each(config,function(key, value){
               
@@ -339,13 +351,93 @@
         
         catAdm.sendCat2Cloud();
   }
-  
   $(document).ready(function() {
       
       if(window.sessionStorage.getItem("logged"))
           checkBarStatusStatus();
-     // }
   });
+  
+    function getLocationsMap() {
+    
+        if (navigator.geolocation) {
+            console.log("Access GEOLOC");
+            navigator.geolocation.getCurrentPosition(function(position){
+                showPosition(position.coords.latitude, position.coords.longitude);
+            });
+            console.log("Loading map");
+        } else {
+            console.log("Map Failed");
+        }
+   // });
+   }
+   
+   
+
+   function showPosition(lat, lon) {
+        
+          console.log(lat + " : "+lon);
+          var waiting4GM = window.setInterval(function(){
+              if(google){
+                  window.clearInterval(waiting4GM);
+                  var latlon = new google.maps.LatLng(lat, lon);
+                  var myOptions = {
+                        zoom: 16,
+                        center: latlon,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+
+                  var map = new google.maps.Map(document.getElementById("mapholder"), myOptions);
+                  var marker = new google.maps.Marker({
+                        position: latlon,
+                        draggable: true,
+                        map: map,
+                        title: "You are here!",
+                        label: "B"
+                    });
+                  // Create the search box and link it to the UI element.
+                var input = document.getElementById('searchLoc');
+                var searchBox = new google.maps.places.SearchBox(input);                
+                map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+                
+                google.maps.event.addDomListener(input, 'keydown', function(e) { 
+                    if (e.keyCode == 13) { 
+                        e.preventDefault(); 
+                    }
+                }); 
+                
+                searchBox.setBounds(map.getBounds());
+                // Bias the SearchBox results towards current map's viewport.
+                map.addListener('bounds_changed', function() {
+                  searchBox.setBounds(map.getBounds());
+                });  
+                
+                searchBox.addListener('places_changed', function() {
+                    var places = searchBox.getPlaces();
+                    if (places.length == 0) {
+                      return;
+                    }
+                    console.log(places);
+                    places.forEach(function(place) {
+                        if (!place.geometry) {
+                          console.log("Returned place contains no geometry");
+                          return;
+                        }
+                        newLat = place.geometry.location.lat();
+                        newLon = place.geometry.location.lng();
+                       // console.log(place.geometry.location.lat() +" : "+place.geometry.location.lng());                       
+                       marker.setPosition(place.geometry.location);
+                       map.setCenter(place.geometry.location);
+                    });
+                });
+                
+                google.maps.event.addListener(marker, "dragend", function(event) { 
+                        newLat = event.latLng.lat(); 
+                        newLon = event.latLng.lng();                         
+                        console.log("Position changed: "+lat + " : "+lng);
+                 });
+              }
+          });
+    }
   
   
 })(jQuery);
@@ -354,9 +446,9 @@ var sectionMapping = {
       'login':{'id':'loginDiv','posy':'100'},
       'subscribe':{'id':'newBarDiv','posy':'-400'},
       'forgotPass':{'id':'forgotPassDiv','posy':'-900'},
-      'config1':{'id':'configDiv','posy':'-1350'},
-      'config2':{'id':'config2Div','posy':'-1950'},
-      'config3':{'id':'config3Div','posy':'-2100'},
+      'config1':{'id':'configDiv','posy':'-1150'},
+      'config2':{'id':'config2Div','posy':'-1650'},
+      'config3':{'id':'config3Div','posy':'-1970'},
        'loaded':'login'
   };
   
@@ -377,4 +469,3 @@ var sectionMapping = {
       sectionMapping.loaded = section;
       
   }
-   

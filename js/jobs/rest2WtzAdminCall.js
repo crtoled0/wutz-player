@@ -34,17 +34,21 @@ var callValues = JSON.parse(args[1]);
 var service = callValues.service;
 var method = callValues.method;
 
+var head = {"content-type":"application/json charset=utf-8",
+               "accept-charset":"utf-8",
+               "accept-encoding":"utf-8"};
+
    if(method.toLowerCase() === "post" && service === "uploadCatalog"){
        
        var catalog = JSON.parse(fs.readFileSync(homePath+"/json/catalog.json"));
-     //  logger.info("catalog:"+JSON.stringify(catalog));
-       rest.post({url:'http://wutznet.com/uploadLocalCatalog', 
+      // logger.info("catalog:"+JSON.stringify(catalog));
+       rest.post({headers: head,url:'http://wutznet.com/uploadLocalCatalog', 
                    form: JSON.stringify(catalog)}, 
                    function(err,httpResponse,body){
                      var res = {"err":err,
                                 "status":httpResponse!==undefined?httpResponse.statusCode:"",
                                 "result":body};
-                            
+                    //  logger.info(httpResponse);
                      console.log(JSON.stringify(res));
                    }
        );

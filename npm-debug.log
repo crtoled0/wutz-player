@@ -11,7 +11,7 @@
 7 verbose unsafe-perm in lifecycle true
 8 info Wutz-Player@1.0.0 Failed to exec start script
 9 verbose stack Error: Wutz-Player@1.0.0 start: `electron main.js`
-9 verbose stack Exit status 2147483651
+9 verbose stack Exit status 1
 9 verbose stack     at EventEmitter.<anonymous> (C:\Program Files\nodejs\node_modules\npm\lib\utils\lifecycle.js:217:16)
 9 verbose stack     at emitTwo (events.js:87:13)
 9 verbose stack     at EventEmitter.emit (events.js:172:7)
@@ -28,7 +28,7 @@
 15 error npm  v2.15.0
 16 error code ELIFECYCLE
 17 error Wutz-Player@1.0.0 start: `electron main.js`
-17 error Exit status 2147483651
+17 error Exit status 1
 18 error Failed at the Wutz-Player@1.0.0 start script 'electron main.js'.
 18 error This is most likely a problem with the Wutz-Player package,
 18 error not with npm itself.

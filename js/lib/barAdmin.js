@@ -60,9 +60,9 @@ var login = function(authAcc,callback) {
 };
 
 
-var register = function(conf,callback) {
+var register = function(regData,callback) {
     
-  app2WutzAdm.goPost("registerBar",conf, function(result){
+  app2WutzAdm.goPost("registerBar",regData, function(result){
       console.log("I'm back ["+result+"]");
       callback(result);
   });
@@ -70,7 +70,7 @@ var register = function(conf,callback) {
 
 var saveConf = function(conf,callback) {
   
-    app2WutzAdm.goPost("uploadLocalCatalog",conf, function(result){
+    app2WutzAdm.goPost("uploadLocalServerInfo",conf, function(result){
       console.log("I'm back ["+result+"]");
       callback(result);
   });

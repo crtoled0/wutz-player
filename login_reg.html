@@ -32,11 +32,11 @@
 				<div class="login-group">
 					<div class="form-group">
 						<label for="bar_id" class="sr-only">Bar or Event Id</label>
-						<input type="text" class="form-control" id="bar_id" name="bar_id" placeholder="-">
+						<input type="text" class="form-control" id="bar_id" name="bar_id" placeholder="_____________">
 					</div>
 					<div class="form-group">
 						<label for="pass" class="sr-only">Password</label>
-						<input type="password" class="form-control" id="pass" name="pass" placeholder="-">
+						<input type="password" class="form-control" id="pass" name="pass" placeholder="_____________">
 					</div>
 					<div class="form-group login-group-checkbox">
 						<input type="checkbox" id="lg_remember" name="lg_remember">
@@ -56,52 +56,38 @@
 
 <!-- REGISTRATION FORM -->
 <div id="newBarDiv" class="text-center" style="padding:50px 0;visibility: hidden;">
-	<div class="logo">register</div>
+	<div class="logo">Register</div>
 	<!-- Main Form -->
 	<div class="login-form-1">
 		<form id="register-form" class="text-left">
 			<div class="login-form-main-message"></div>
 			<div class="main-login-form">
 				<div class="login-group">
-					<div class="form-group">
-						<label for="reg_username" class="sr-only">Email address</label>
-						<input type="text" class="form-control" id="reg_username" name="reg_username" placeholder="username">
+                                        <div class="form-group">
+                                            <label for="barId" class="sr-only">Bar Id</label>
+                                            <input type="text" class="form-control" id="barId" name="barId" placeholder="_____________">
+					</div>
+                                        <div class="form-group">
+                                            <label for="pass" class="sr-only">Password</label>
+                                            <input type="password" class="form-control" id="pass" name="pass" placeholder="_____________">
+					</div>
+                                        <div class="form-group">
+                                            <label for="rep_password" class="sr-only">Repeat Password</label>
+                                            <input type="password" class="form-control" id="password" name="rep_password" placeholder="_____________">
 					</div>
 					<div class="form-group">
-						<label for="reg_password" class="sr-only">Password</label>
-						<input type="password" class="form-control" id="reg_password" name="reg_password" placeholder="password">
+						<label for="nombreBar" class="sr-only">Bar Name</label>
+						<input type="text" class="form-control" id="nombreBar" name="nombreBar" placeholder="_____________">
 					</div>
-					<div class="form-group">
-						<label for="reg_password_confirm" class="sr-only">Password Confirm</label>
-						<input type="password" class="form-control" id="reg_password_confirm" name="reg_password_confirm" placeholder="confirm password">
-					</div>
-					
-					<div class="form-group">
-						<label for="reg_email" class="sr-only">Email</label>
-						<input type="text" class="form-control" id="reg_email" name="reg_email" placeholder="email">
-					</div>
-					<div class="form-group">
-						<label for="reg_fullname" class="sr-only">Full Name</label>
-						<input type="text" class="form-control" id="reg_fullname" name="reg_fullname" placeholder="full name">
-					</div>
-					
-					<div class="form-group login-group-checkbox">
-						<input type="radio" class="" name="reg_gender" id="male" placeholder="username">
-						<label for="male">male</label>
-						
-						<input type="radio" class="" name="reg_gender" id="female" placeholder="username">
-						<label for="female">female</label>
-					</div>
-					
-					<div class="form-group login-group-checkbox">
-						<input type="checkbox" class="" id="reg_agree" name="reg_agree">
-						<label for="reg_agree">i agree with <a href="#">terms</a></label>
+                                        <div class="form-group">
+						<label for="email" class="sr-only">Email</label>
+						<input type="text" class="form-control" id="email" name="email" placeholder="_____________">
 					</div>
 				</div>
+                                <div class="etc-login-form">
+                                    <p>already have an account? <a href="#" onclick="loadSectionPage('login');">login here</a></p>
+                                </div>
 				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
-			</div>
-			<div class="etc-login-form">
-				<p>already have an account? <a href="#" onclick="loadSectionPage('login');">login here</a></p>
 			</div>
 		</form>
 	</div>
@@ -136,8 +122,6 @@
 	<!-- end:Main Form -->
 </div>
 
-
-
 <!-- EDIT BAR -->
 <div id="configDiv" class="text-center" style="padding:50px 0;visibility: hidden;">
 	<div class="logo">Config</div>
@@ -156,27 +140,27 @@
 					</div>
 					<div class="form-group">
 						<label for="nombreBar" class="sr-only">Bar Name</label>
-						<input type="text" class="form-control" id="nombreBar" name="nombreBar" placeholder="-">
+						<input type="text" class="form-control" id="nombreBar" name="nombreBar" placeholder="_____________">
 					</div>
                                         <div class="form-group">
 						<label for="representante" class="sr-only">Bar Manager</label>
-						<input type="text" class="form-control" id="representante" name="representante" placeholder="-">
+						<input type="text" class="form-control" id="representante" name="representante" placeholder="_____________">
 					</div>
                                         <div class="form-group">
 						<label for="representante" class="sr-only">Phone</label>
-						<input type="text" class="form-control" id="telefono" name="telefono" placeholder="-">
+						<input type="text" class="form-control" id="telefono" name="telefono" placeholder="_____________">
 					</div>
                                         <div class="form-group">
 						<label for="reg_email" class="sr-only">Email</label>
-						<input type="text" class="form-control" id="email" name="email" placeholder="-">
+						<input type="text" class="form-control" id="email" name="email" placeholder="_____________">
 					</div>
                                         <div class="form-group">
 						<label for="dayToken" class="sr-only">Day Token</label>
-						<input type="text" class="form-control" id="dayToken" name="dayToken" placeholder="-">
+						<input type="text" class="form-control" id="dayToken" name="dayToken" placeholder="_____________">
 					</div>
                                         <div class="form-group">
 						<label for="desc" class="sr-only">Short Bar Description</label>
-						<input type="text" class="form-control" id="desc" name="desc" placeholder="-">
+						<input type="text" class="form-control" id="desc" name="desc" placeholder="_____________">
 					</div>
 					
 				</div>
@@ -205,6 +189,8 @@
 				<div class="login-group">
 					<div class="form-group">
 						<label for="musicPath" class="sr-only">Select Folder</label>
+                                                <input type="button" id="pickFolder" value="Select Folder"/>
+                                                
 						<input type="text" class="form-control" id="musicPath" name="musicPath" />
 						
 					</div>
@@ -224,19 +210,22 @@
 	<div class="logo">Donde estamos?</div>
 	<!-- Main Form -->
 	<div class="login-form-1">
-		<form id="forgot-password-form" class="text-left">
+		<form id="find-location-form" class="text-left">
 			<div class="etc-login-form">
-				<p>Selecciona la ubicación geografica donde se encuentra tu bar o evento.</p>
+				<p>Selecciona la ubicación geografica donde se encuentra tu bar o evento. Puedes buscar la dirección y mover el marcador a la posicion que corresponde.</p>
 			</div>
 			<div class="login-form-main-message"></div>
 			<div class="main-login-form">
 				<div class="login-group">
 					<div class="form-group">
-						<label for="fp_email" class="sr-only">Email address</label>
-						<input type="text" class="form-control" id="fp_email" name="fp_email" placeholder="email address">
+						<input type="text" class="controls" id="searchLoc" name="searchLoc" placeholder="Buscar Direccion">
+                                                <div id="mapholder"></div>
 					</div>
 				</div>
-				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+                                <div class="etc-login-form">
+                                    <p><a href="#" onclick="loadSectionPage('config1');">Cancel [Back to Config]</a></p>
+                                </div>
+				<button type="button" class="login-button" ><i class="fa fa-chevron-right"></i></button>
 			</div>
 		</form>
 	</div>
@@ -247,7 +236,8 @@
 <script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
 <script src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/knockout-3.4.0.js"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3.exp&libraries=geometry,places&ext=.js&key=AIzaSyDWb0e33SveVDMVlpJv1kDADQ_9ZH-zE40"></script>
+<script type="text/javascript" src="js/geoLocationEdit.js"></script>
 <script type="text/javascript" src="js/wutzLocalAdmin.js"></script>
 </body>
 </html>

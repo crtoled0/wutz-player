@@ -151,30 +151,47 @@
  $("#configDiv form").submit(function() {
   	remove_loading($("#configDiv form"));
         form_loading($("#configDiv form"));
-	if(!catLoaded){
-            //loadSectionPage("config2");
-            remove_loading($("#configDiv form"));
-            form_failed($("#configDiv form"), "Catalog is not loaded<br/>");
-            return false;
-            
-        }
-        else if(config.latitude === "" || config.longitute===""){
-            //loadSectionPage("config3");
-            remove_loading($("#configDiv form"));
-            form_failed($("#configDiv form"), "Bar Location not specified<br/>");
-            return false;
-        }
-        remove_loading($("#configDiv form"));
         
-        bAdm.saveConf(config,function(result){
-            if(result.OK){
-                logger.info("Config Changes Applied on server");
-            }
-            else{
-                logger.info("Config Changes Not Saved on server, or no changes");
-            }
-            document.location.href="./player.html";
-        });
+        var currForm = $("#configDiv form");
+        config.nombreBar = currForm.find("#nombreBar").val();
+        config.email = currForm.find("#email").val();
+        config.songsAllowed = currForm.find("#songsAllowed").val();
+        config.representante = currForm.find("#representante").val();
+        config.telefono = currForm.find("#telefono").val();
+        config.dayToken = currForm.find("#dayToken").val();
+        config.desc = currForm.find("#desc").val();
+        
+        
+        bAdm.saveConfigFile(config,function(_config){             
+             config = _config;
+             console.log("Config Saved Locally");
+             
+             	if(!catLoaded){
+                    //loadSectionPage("config2");
+                    remove_loading($("#configDiv form"));
+                    form_failed($("#configDiv form"), "Catalog is not loaded<br/>");
+                    return false;
+
+                }
+                else if(config.latitude === "" || config.longitute===""){
+                    //loadSectionPage("config3");
+                    remove_loading($("#configDiv form"));
+                    form_failed($("#configDiv form"), "Bar Location not specified<br/>");
+                    return false;
+                }
+                remove_loading($("#configDiv form"));
+
+                bAdm.saveConf(config,function(result){
+                    if(result.OK){
+                        logger.info("Config Changes Applied on server");
+                    }
+                    else{
+                        logger.info("Config Changes Not Saved on server, or no changes");
+                    }
+                    document.location.href="./player.html";
+                });
+             
+         });
   	return false;
 		
   });
@@ -225,6 +242,7 @@
                     config = _config;
                     $("#catLoadingBox").html("Process Finished"); 
                     remove_loading($("#config2Div form"));
+                    form_success($("#configDiv form"),'Catalog Loaded');
                     checkBarStatusStatus();
                   //  loadSectionPage('config');
                 });
@@ -244,12 +262,9 @@
         form_loading($("#config3Div form"));
          config.latitude = newLat;
          config.longitute = newLon;
-         bAdm.saveConfigFile(config,function(_config){
-             remove_loading($("#config3Div form"));
-             config = _config;
-             console.log("Config Saved Locally");
-             loadSectionPage('config1');
-         });
+         remove_loading($("#config3Div form"));
+         form_success($("#configDiv form"),'Location Setted OK');
+         loadSectionPage('config1');
      }
      else{
          return false;
@@ -317,7 +332,7 @@
       bAdm.loadNeededFiles(function(_config,isCatLoaded){
           config = _config;
           
-          if(config.latitude!=="" && config.longitute!=="")
+          if(config.latitude!==null && config.longitute!==null && config.latitude!=="" && config.longitute!=="")
               showPosition(config.latitude, config.longitute);
           else
               getLocationsMap();

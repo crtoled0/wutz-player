@@ -22,7 +22,7 @@ ipcMain.on('getAppPath', function(event, arg) {
 });
 
 ipcMain.on('isDevMode', function(event, arg) {
-  event.returnValue = true; //Switch to stablish dev or release version
+  event.returnValue = false; //Switch to stablish dev or release version
 });
 //logger.setLocalItem("appPath",app.getAppPath());
 // This method will be called when Electron has finished

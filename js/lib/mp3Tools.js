@@ -36,6 +36,7 @@ exports.getAllTags = function(song, callback){
     var fileBuffer = fs.readFileSync(songPath);
 
     ID3.parse(fileBuffer).then(function (tag) {
+       // console.log(tag);
         callback(tag);
     });
 };
@@ -45,57 +46,68 @@ exports.loadFrontAlbumPic = function(song, callback){
     var filName = song.file_name;  
     var songPath = filPath+"/"+filName;
     // filePath as string 
-    if(song.album){
-        var possImg = homePath+"/img/fronts/"+song.album;
-        if (fs.existsSync(possImg+".jpg")) {
-           // logger.info('Found file');
-            song.pic = possImg+".jpg";
-            callback(song);
-            return;
+   try{
+        if(song.album){
+            var possImg = homePath+"/img/fronts/"+song.album;
+            if (fs.existsSync(possImg+".jpg")) {
+                song.pic = possImg+".jpg";
+                callback(song);
+                return;
+            }
+            else if (fs.existsSync(possImg+".png")) {
+                song.pic = possImg+".png";
+                callback(song);
+                return;
+            }
         }
-        else if (fs.existsSync(possImg+".png")) {
-          //  logger.info('Found file');
-            song.pic = possImg+".png";
-            callback(song);
-            return;
-        }
-    }
-    
-    var fileBuffer = fs.readFileSync(songPath);
-    ID3.parse(fileBuffer).then(function (tag) {
         
-        if(!tag.image){
-           // callback(song);
-            return;
-        }
-        //logger.info(tag);
-        var mime = tag.image.mime;
-        var picExt = mime==="image/png"?"png":"jpg";
-        var picPathName = homePath+"/img/fronts/"+tag.album+"."+picExt;
-        song.pic = picPathName;
-        
-        if (fs.existsSync(picPathName)) {
-            //logger.info('Found file');
-            callback(song);
-            return;
-        }
-        else{
-            var imgDataArr = tag.image.data;
-          //  var imgDataArr = new Buffer(imgDataArr);
+        if(fs.existsSync(songPath)){
+            var fileBuffer = fs.readFileSync(songPath);
+            ID3.parse(fileBuffer).then(function (tag) {
 
-            var myStream = new stream.Readable();
-            var i = 0;
-            fs.createWriteStream(picPathName);
-            
-            fs.appendFile(picPathName, new Buffer(tag.image.data), function (err) {
-                if (err) {
-                 // logger.info(err);
-                } else {
-                  //logger.info("File Size "+ tag.image.data.length);
-                  //logger.info("File Created");
-                  callback(song);
+                if(!tag.image){
+                   // callback(song);
+                    return;
+                }
+                //logger.info(tag);
+                var mime = tag.image.mime;
+                var picExt = mime==="image/png"?"png":"jpg";
+                var picPathName = homePath+"/img/fronts/"+tag.album+"."+picExt;
+                song.pic = picPathName;
+
+                if (fs.existsSync(picPathName)) {
+                    //logger.info('Found file');
+                    callback(song);
+                    return;
+                }
+                else{
+                    var imgDataArr = tag.image.data;
+                    var myStream = new stream.Readable();
+                    var i = 0;
+                    fs.createWriteStream(picPathName);
+                    fs.appendFile(picPathName, new Buffer(tag.image.data), function (err) {
+                        if (err) {
+                         // logger.info(err);
+                        } else {
+                          //logger.info("File Size "+ tag.image.data.length);
+                          //logger.info("File Created");
+                          callback(song);
+                        }
+                    });
                 }
             });
         }
-    });
+        else{
+            song.err = true;
+            song.exc = "File ["+songPath+"] NOT Found";
+            callback(song);
+            return ;
+        }
+   }catch(e){
+       
+       song.err = true;
+       song.exc = e;
+       callback(song);
+       return ;
+   }
 };

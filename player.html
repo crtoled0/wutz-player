@@ -28,6 +28,12 @@
 <!-- That looks cool. We are done!! -->    
 <div id="mainContainer">
         <!--div id="audioContainer"></div -->
+        <section id="playerHeader">
+            <img src="img/icon.png" width="50" height="50" />
+            <div id="headerOptions">
+                <img src="img/bars-black.png" data-bind="click: toogleHeaderMenu"/>
+            </div>
+        </section>
         <section class='wrapper'>
             <div data-carousel-3d>
 
@@ -45,12 +51,12 @@
                 </div>
             </div>
         </div>
-        <section class="qrInfoSection">
+        <!-- section class="qrInfoSection">
             <div>
                 <img id="qrAppImg" src="" /><br/>
             </div>
             
-        </section>
+        </section -->
         <section class="playListSection">
           <table class="bordered">
             <thead>
@@ -63,17 +69,24 @@
             </thead>
             <tbody id="playList" data-bind="foreach: { data: playList, as: 'song' }">
                  <tr class="">
-                     <td>
+                     <td style="width: 20%">
                          <input type="hidden" id="songId" data-bind="attr: {'value':song.songid}" />
                          <p data-bind="html:song.htmlAudioObject"></p>
                      </td>
-                     <td data-bind="html:song.artist"></td>
-                     <td class="sliderCol"><span data-bind="html:song.album"></span></td>
+                     <td data-bind="html:song.artist" style="width: 20%"></td>
+                     <td class="sliderCol" style="width: 20%"><span data-bind="html:song.album"></span></td>
                      <td class="sliderCol"><span data-bind="html:song.name"></span></td>
                 </tr>
             </tbody>
         </table>
       </section>
+</div>
+<div id="headerMenu">
+      <ul>
+          <li data-bind="click: setFullScreen"><img src="img/plus-white.png" /> Full Screen</li>
+          <li data-bind="click: exitPlayer"><img src="img/delete-white.png" /> Exit Player</li>
+          <li data-bind="click: toogleHeaderMenu"><img src="img/back-white.png" /> Cancel</li>
+      </ul>
 </div>
 
 <script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>

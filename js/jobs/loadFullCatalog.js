@@ -3,6 +3,10 @@ var path = require('path');
 var id3 = require('id3-parser');
 var os = require('os');
 
+var StringDecoder = require('string_decoder').StringDecoder;
+var decoder = new StringDecoder('utf8');
+
+
 var logger = require('../lib/log4Wutz');
 
 var walkMP3 = function(dir, done) {
@@ -21,7 +25,7 @@ var walkMP3 = function(dir, done) {
           });
         } 
         else {
-          if(file.toLowerCase().indexOf(".mp3") !== -1) {
+          if(file.toLowerCase().indexOf(".mp3") !== -1 || file.toLowerCase().indexOf(".m4a") !== -1) {
                 results.push(file);
           }
           if (!--pending) done(null, results);
@@ -58,6 +62,9 @@ var walkIMG = function(dir, done) {
   });
 };
 
+String.prototype.capitalize = function(){
+   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+};
 //console.log("LOADING CATALOG ...");
 logger.info("LOG FROM PROCESS");
  var homePath = os.homedir()+"/.wutz";
@@ -113,22 +120,36 @@ var interv = setInterval(function(){
 },1000);
 
 
-var mp3t = require('../lib/mp3Tools');
+//var mp3t = require('../lib/mp3Tools');
+
+//var strUtls = id3.StringUtils;
 var getArrayMd3 = function(index, total){
   
+  //var StringUtils = require("StringUtils");
+  
     if(index < total){
-        mp3t.getTagsFromPath(songList[index].songPath+sep+songList[index].songFileName, function(res){
+        var fileBuffer = fs.readFileSync(songList[index].songPath+sep+songList[index].songFileName);
+        id3.parse(fileBuffer).then(function (res){
+      //  mp3t.getTagsFromPath(songList[index].songPath+sep+songList[index].songFileName, function(res){
+           // var tit = new Buffer(res.title);
+            
+      //   console.log(Encoding.Unicode.GetString(res.title));
+                      //  logger.info(tit.toString("utf-8",0,20) + " : "+decoder.write(tit));
+                        
+                        
                         var perc = Math.round((index/total)*100)+"%";
                        // console.log("["+Math.round((index/total)*100)+"%] Loaded");
                         songList[index].songName = res.title?res.title.replace("  "," "):songList[index].songFileName;
                         var id3Artist = songList[index].songArtist;//res.artist?res.artist.replace("  "," "):songList[index].songArtist; 
                         var id3Album = res.album?res.album.replace("  "," "):songList[index].songAlbum;
+                        id3Artist = id3Artist.capitalize();
+                        id3Album = id3Album.capitalize();
                         //id3Artist.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g,"");
                         //id3Album = id3Album.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g,"");
                         
                         songList[index].songArtist = id3Artist;
                         songList[index].songAlbum = id3Album;
-                        songList[index].songName = songList[index].songName.replace(".mp3","");
+                        songList[index].songName = (songList[index].songName.replace(".mp3","")).replace(".m4a","");
                         songList[index].track = res.track?res.track:"";
                         songList[index].pic = "";
 

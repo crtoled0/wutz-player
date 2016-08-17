@@ -11,13 +11,16 @@ function AppViewModel() {
 var config = null;
 var homePath = window.sessionStorage.getItem("homePath");
 var logger = require('./js/lib/log4Wutz');
+var ipc = require('electron').ipcRenderer;
+
+var brokenSongs = [];
 
 $(document).ready(function() {
     
     $.getJSON( homePath+"/json/config.json", function(_config) {
         
-        var qrUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+_config.downloadAppURL+"&v="+Math.random();
-        $("#qrAppImg").attr("src",qrUrl);
+       // var qrUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+_config.downloadAppURL+"&v="+Math.random();
+       // $("#qrAppImg").attr("src",qrUrl);
         config = _config;
         var params = {};
         params.catId = config.catid;
@@ -74,11 +77,17 @@ this.loadAndPlayRandomSong = function(){
 this.loadAndPlaySong = function(song){
    
     try{
-     $("#"+song.songid).get(0).play();
-    mainMod.songChecker($("#"+song.songid).get(0));
-    //mainMod.loadAndPlaySongReturn(song);
+      
+      if($.inArray(song.songid,brokenSongs) === -1){       
+        $("#"+song.songid).get(0).play();        
+        mainMod.songChecker($("#"+song.songid).get(0));
+      }
+      else{
+          logger.info("ERROR LOADING SONG : ["+song.songid+"]");
+          mainMod.goNextQueue();
+      }
     }catch(err){
-        logger.info(err);
+        logger.info("ERROR LOADING SONG : ["+err+"]");
         mainMod.goNextQueue();
     }
 };
@@ -115,8 +124,7 @@ this.goNextQueue = function(){
     
     //comingfromArrow = comingfromArrow?true:false;
    //if($("#playList").children().size() > 1)
-   if(mainMod.playList().length > 1)
-   {
+   if(mainMod.playList().length > 1) {
       var newRow = $(".playingRow").next();
         $(".playingRow").remove();
         mainMod.removeSongFromPlaylist(mainMod.playList()[0].songid,mainMod.playList()[0].client_guid);
@@ -125,8 +133,7 @@ this.goNextQueue = function(){
      //   var songId = mainMod.playList()[0].songid;//$(".playingRow #songId").attr("value");
         mainMod.loadAndPlaySong(mainMod.playList()[0]);
    }
-   else
-   {
+   else {
       $(".playingRow").remove();
       mainMod.removeSongFromPlaylist(mainMod.playList()[0].songid,mainMod.playList()[0].client_guid);
       mainMod.playList.removeAll();
@@ -213,7 +220,13 @@ this.loadFullCatalogReturn = function(jsonRes){
          mainMod.playList.push(tempSong);
         mp3t.loadFrontAlbumPic(tempSong, function(song){
             //tempSong.pic =  imgPath;
-            $("#cont_"+song.songid+" img").attr("src",song.pic);
+            if(song.err === undefined)
+                $("#cont_"+song.songid+" img").attr("src",song.pic);
+            else{
+                logger.info("Song With Issues : "+song.songid+"["+song.file_name+"]["+song.exc+"]");
+                brokenSongs.push(song.songid);
+              //  mainMod.removeSongFromPlaylist(song.songid,song.client_guid)
+            }
         });
         
      });
@@ -227,18 +240,91 @@ this.loadFullCatalogReturn = function(jsonRes){
     }
 };
 
-this.checkEmptyList = function(){
-    
-    var inter = setInterval(function()
-    {
-        if($("#playList").children().size() > 0)
-        {
-            clearInterval ( inter );
-            mainMod.startQueue();
-        }
-    }, 3000 );
-};
+    this.checkEmptyList = function(){
 
+        var inter = setInterval(function()
+        {
+            if($("#playList").children().size() > 0)
+            {
+                clearInterval ( inter );
+                mainMod.startQueue();
+            }
+        }, 3000 );
+    };
+
+
+    this.toogleHeaderMenu = function(data, event){
+        
+        console.log("Mouse ["+event.pageX+"]["+event.pageY+"]");
+        var menuObj = $("#headerMenu");
+        if(menuObj.css("width") === "0px"){
+            //menuObj.offset({left:event.pageX,top:event.pageY});
+            menuObj.animate({width:"300px"},1000);
+            //menuObj.fadeIn("slow");
+        }
+        else{
+            menuObj.animate({width:"0px"},1000);
+            //menuObj.fadeOut("slow");
+        }
+    };
+    
+    this.exitPlayer = function(){
+        
+        document.location = "./login_reg.html";
+        
+    };
+    
+    /**
+    this.setFullScreen = function(){
+       modul = this;
+       console.log("Setting Full Screen");
+      // var element = document.getElementById("mainContainer");
+       var element = document.body;
+          if (element.requestFullscreen)
+              element.requestFullscreen();
+          else if (element.msRequestFullscreen)
+              element.msRequestFullscreen();
+          else if (element.mozRequestFullScreen)
+              element.mozRequestFullScreen();
+          else if (element.webkitRequestFullscreen)
+              element.webkitRequestFullscreen();
+          
+          element.style.display='none';
+          element.offsetHeight; // no need to store this anywhere, the reference is enough
+          element.style.display='';
+         // element.style.webkitTransform = 'scale(1)';
+         // modul.refreshCssFiles();
+          
+     };
+     **/
+    
+     this.setFullScreen = function(){
+        
+        var mod = this;
+        var menuObj = $("#headerMenu");
+        menuObj.animate({width:"0px"},1000);
+        ipc.sendSync('toogFullScreen');
+        
+          $(document).keyup(function(e) {
+            if (e.keyCode == 27) { // escape key maps to keycode `27`
+                mod.setFullScreen();
+            }
+           });
+        
+     };
+    
+    
+    this.refreshCssFiles = function(){
+        
+        var linkTemplate = "<link rel=\"stylesheet\" type=\"text/css\" />";
+        $("link", "head").each(function(i){
+            var tempCssLink = $(this).attr("href");
+            var newCss = $(linkTemplate);
+            newCss.attr("href",tempCssLink);
+            $(this).remove();
+            $("body").append(newCss);
+        });
+    };
 };
 
 // Activates knockout.js

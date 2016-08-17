@@ -8,6 +8,7 @@ const ipcMain = require('electron').ipcMain;
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
 
+//var playerWindow = null;
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
   // On OS X it is common for applications and their menu bar
@@ -17,13 +18,34 @@ app.on('window-all-closed', function() {
   }
 });
 
+ipcMain.on('setFullScreen', function(event, arg) {
+  //event.returnValue = app.getAppPath();
+   mainWindow.setFullScreen(true);
+});
+ipcMain.on('exitFullScreen', function(event, arg) {
+  //event.returnValue = app.getAppPath();
+   mainWindow.setFullScreen(false);
+});
+
+ipcMain.on('toogFullScreen', function(event, arg) {
+  //event.returnValue = app.getAppPath();
+   if (mainWindow)
+           mainWindow.setFullScreen(!mainWindow.isFullScreen());
+   
+   event.returnValue = true;
+});
+
+
+
 ipcMain.on('getAppPath', function(event, arg) {
   event.returnValue = app.getAppPath();
 });
 
 ipcMain.on('isDevMode', function(event, arg) {
-  event.returnValue = false; //Switch to stablish dev or release version
+  event.returnValue = true; //Switch to stablish dev or release version
 });
+
+
 //logger.setLocalItem("appPath",app.getAppPath());
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

@@ -5,8 +5,9 @@ and open the template in the editor.
 */
 /* 
     Created on : Feb 21, 2015, 12:35:04 PM
-    Author     : cristian
+    Author     : cristian toledo
 */
+
 
 body {
     width: 100%;
@@ -23,12 +24,12 @@ table {
 
 .bordered {
     border: solid #ccc 1px;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
     -webkit-box-shadow: 0 1px 1px #ccc; 
-    -moz-box-shadow: 0 1px 1px #ccc; 
-    box-shadow: 0 1px 1px #ccc;         
+    box-shadow: 0 1px 1px #ccc;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 .bordered tr:hover {
@@ -40,26 +41,28 @@ table {
     transition: all 0.1s ease-in-out;     
 }    
     
-.bordered td, .bordered th {
+.bordered td {
     border-left: 1px solid #ccc;
     border-top: 1px solid #ccc;
-    padding: 10px;
+    padding: 2px;
     text-align: left;    
 }
 
 .bordered th {
-    background-color: #dce9f9;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
-    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 6px;
+    text-align: left;    
+}
+
+.bordered th {
+    background-color:  #0d3349; /** #dce9f9; **/  /** #ebf3fc :  **/
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#0d3349), to(#aaaaaa));
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset; 
-    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;  
-    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;        
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
     border-top: none;
     text-shadow: 0 1px 0 rgba(255,255,255,.5); 
+    color: #FFFFcc; 
 }
 
 .bordered td:first-child, .bordered th:first-child {
@@ -67,15 +70,19 @@ table {
 }
 
 .bordered th:first-child {
+    /**
     -moz-border-radius: 6px 0 0 0;
     -webkit-border-radius: 6px 0 0 0;
     border-radius: 6px 0 0 0;
+    **/
 }
 
 .bordered th:last-child {
+   /**
     -moz-border-radius: 0 6px 0 0;
     -webkit-border-radius: 0 6px 0 0;
     border-radius: 0 6px 0 0;
+   **/
 }
 
 .bordered th:only-child{
@@ -239,7 +246,7 @@ table {
 
 .playListSection{
     min-width: 85%;
-    width: auto;
+    width: 100%;
     position: relative;
     float: right;
 }
@@ -263,4 +270,64 @@ audio{
 .sliderCol span{
     position: relative;
     width: 100%;
+}
+
+#playerHeader{
+    height: 50px;
+    background-color: #ffffff;
+    width: 100%;
+    opacity: 0.5;
+   /** padding: 3px; **/
+   border-top-right-radius: 3px;
+   border-top-left-radius: 3px;
+}
+
+#playerHeader img{
+    margin-left: 3px;
+}
+
+#playerHeader #headerOptions{
+    float: right;
+    height: 100%;
+}
+
+#playerHeader #headerOptions img{
+    margin-right: 10px;
+    margin-top: 60%;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+}
+
+#headerMenu{
+    z-index: 1000;
+    background: #000000;
+    opacity: 0.8;
+    position: absolute;
+    height: 100%;
+    right: 0;
+    width: 0px;
+}
+
+#headerMenu ul{
+    list-style-type: none;
+    width: 100%;
+    margin-top: 50px
+
+}
+
+#headerMenu li{
+    text-align: left;
+    color: white;
+    text-transform: none;
+    cursor: pointer;
+    margin: 8px;
+    padding: 4px;
+    border-radius: 3px;
+    border-bottom: 1px dotted #aaaaaa;
+}
+
+#headerMenu li:hover{
+    color: black;
+    background-color: #aaaaaa;
 }

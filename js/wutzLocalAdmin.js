@@ -458,12 +458,12 @@
 })(jQuery);
 
 var sectionMapping = {
-      'login':{'id':'loginDiv','posy':'100'},
+      'login':{'id':'loginDiv','posy':'0'},
       'subscribe':{'id':'newBarDiv','posy':'-400'},
       'forgotPass':{'id':'forgotPassDiv','posy':'-900'},
-      'config1':{'id':'configDiv','posy':'-1150'},
-      'config2':{'id':'config2Div','posy':'-1650'},
-      'config3':{'id':'config3Div','posy':'-1970'},
+      'config1':{'id':'configDiv','posy':'-1300'},
+      'config2':{'id':'config2Div','posy':'-1800'},
+      'config3':{'id':'config3Div','posy':'-2180'},
        'loaded':'login'
   };
   

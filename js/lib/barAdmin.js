@@ -5,7 +5,7 @@
  */
 var logger = require('./log4Wutz');
 var os = require('os');
-var app2WutzAdm = require("./app2wutzAdm");
+//var app2WutzAdm = require("./app2wutzAdm");
 var fs = require('fs');
 
 var sep = os.platform()==="win32"?"\\":"/";
@@ -53,16 +53,17 @@ var login = function(authAcc,callback) {
   
   logger.info("Going to login "+JSON.stringify( authAcc ));
   
-  app2WutzAdm.goPost("login",authAcc, function(result){
-      console.log("I'm back ["+result.logged+"]");
+  window.AjaxWAdmin.callService("login",authAcc,"POST",function(result){
+      console.log("I'm back from new Lib["+result.logged+"]");
       callback(result);
   });
 };
 
 
 var register = function(regData,callback) {
-    
-  app2WutzAdm.goPost("registerBar",regData, function(result){
+  
+  window.AjaxWAdmin.callService("registerBar",regData,"POST",function(result){
+  //app2WutzAdm.goPost("registerBar",regData, function(result){
       console.log("I'm back ["+result+"]");
       callback(result);
   });
@@ -70,7 +71,8 @@ var register = function(regData,callback) {
 
 var saveConf = function(conf,callback) {
   
-    app2WutzAdm.goPost("uploadLocalServerInfo",conf, function(result){
+  window.AjaxWAdmin.callService("uploadLocalServerInfo",conf,"POST",function(result){
+ //   app2WutzAdm.goPost("uploadLocalServerInfo",conf, function(result){
       console.log("I'm back ["+result+"]");
       callback(result);
   });
@@ -132,7 +134,8 @@ var loadNeededFiles = function(callback){
 var loadBarFromWutzServer = function(currBar, callback){
   logger.info("Getting Bar Info..");
   
-  app2WutzAdm.goGet("getBar/"+currBar,function(result){
+  window.AjaxWAdmin.callService("getBar/"+currBar,null,"GET",function(result){
+  //app2WutzAdm.goGet("getBar/"+currBar,function(result){
       logger.info(result);
           
           var newGuid = generateUUID();

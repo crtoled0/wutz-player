@@ -222,7 +222,7 @@
             catAdm.getCatalogFromFileSystem(function(loadMsg){
                // logger.info(loadMsg);
                 try{
-                    var onGoingloadMsg = JSON.parse(loadMsg);
+                    var onGoingloadMsg = loadMsg;//JSON.parse(loadMsg);
                     if(!onGoingloadMsg.done){
                         var perc = onGoingloadMsg.perc;
                         var song = onGoingloadMsg.song;

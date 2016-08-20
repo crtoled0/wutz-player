@@ -13,9 +13,9 @@ jarsigner -keystore myWutz.keystore -storepass [PASSWORD] Wutz.apk wutzKeystore
 
 
 ---------------------------------------------------------------------------------------------------
-electron-packager ../WutzPlayer --platform=win32 --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)"
+electron-packager ../WutzPlayer --platform=win32 --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)" --icon "./icon.ico"
 
-electron-packager ../WutzPlayer --platform=linux --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)"
+electron-packager ../WutzPlayer --platform=linux --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)" --icon "./icon.png"
 
 electron-packager ../WutzPlayer --platform=darwin --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)"
 
@@ -28,3 +28,5 @@ git remote add origin file:///C:\Users\CRTOLEDO\Google Drive\reps\wutzPlayer
 remove obsolete courses
 
 import global wddi instead just Netherland 
+
+npm uninstall electron-spawn --save

@@ -2,6 +2,13 @@ var logger = require('./log4Wutz');
 
 
 exports.getCatalogFromFileSystem = function(onLoading,onFinish){
+   
+    var catJob = require("../jobs/loadFullCatalog");
+    catJob.initLoading(onLoading,onFinish);
+  
+};
+
+var getCatalogFromFileSystem_OLD = function(onLoading,onFinish){
   
     var ipc = require('electron').ipcRenderer;
     var localAppPath = ipc.sendSync('getAppPath');
@@ -41,14 +48,15 @@ exports.getCatalogFromFileSystem = function(onLoading,onFinish){
 exports.sendCat2WutzCloud = function(callback){
      
     logger.info("sending cat to cloud");
-    var rest = require("./app2wutzAdm");
+   // var rest = require("./app2wutzAdm");
     var fs = require('fs');    
     var homePath = window.sessionStorage.getItem("homePath");
     var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
+    var catalog = JSON.parse(fs.readFileSync(homePath+"/json/catalog.json"));
     //logger.info(config);
     //logger.info(catalog);
-    
-    rest.uploadCurrCatalog(function(data){
+    window.AjaxWAdmin.callService("uploadLocalCatalog",catalog,"POST",function(data){
+   // rest.uploadCurrCatalog(function(data){
       logger.info("I'm back ...");
       logger.info(data.Transaction);
       var resJson = data.catalog;//JSON.parse(data.catalog);

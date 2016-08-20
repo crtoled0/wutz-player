@@ -66,7 +66,6 @@ String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
 };
 //console.log("LOADING CATALOG ...");
-logger.info("LOG FROM PROCESS");
  var homePath = os.homedir()+"/.wutz";
 var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
   var musPath = config.musicPath;
@@ -74,51 +73,55 @@ var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
   
   var endedLoading = false;
   var songList = [];
+  
+  var glbExtOnLoading = null;
+  var glbExtOnFinish = null;
 
-   walkMP3(musPath, function(err, results) {
-        
-      //  console.log("Looping Folders");
-        if (err) throw err;
-        
-        for(var i=0;i< results.length;i++){
-          
-           var songFullPath = results[i];
-          var songRelPath = songFullPath.replace(musPath,"");
-          songRelPath = JSON.parse( JSON.stringify( songRelPath ) );
-          
-          var splited = songRelPath.split(sep);
-          
-          var songArtist = (splited[1] !== "")?splited[1]:"Others";
-          var songAlbum = (splited[splited.length-2] !== "")?splited[splited.length-2]:"Unknown";
-          
-          tempSong = {};
-          tempSong.songArtist = songArtist;
-          tempSong.songAlbum = songAlbum;
-          tempSong.songFileName = splited[splited.length-1];
-          tempSong.songPath = songFullPath.replace(tempSong.songFileName,"");
-            // console.log(tempSong);      
-            songList.push(tempSong);     
-          }        
-        // console.log(songList);
-         endedLoading = true;
-         results = null;
-   });
- 
+var initLoading = function(onLoading, onFinish){
+    
+   glbExtOnLoading = onLoading;
+   glbExtOnFinish = onFinish;
+    
+        walkMP3(musPath, function(err, results) {
+           //  console.log("Looping Folders");
+             if (err) throw err;
 
-var interv = setInterval(function(){
-   if(endedLoading){
-      
-      clearInterval(interv);
-    //  console.log("getting ID3 ");
-      var i = 0;
-      var count = songList.length;
-          
-       getArrayMd3(i,count);
-       
-   }
+             for(var i=0;i< results.length;i++){
 
-},1000);
+                var songFullPath = results[i];
+               var songRelPath = songFullPath.replace(musPath,"");
+               songRelPath = JSON.parse( JSON.stringify( songRelPath ) );
 
+               var splited = songRelPath.split(sep);
+
+               var songArtist = (splited[1] !== "")?splited[1]:"Others";
+               var songAlbum = (splited[splited.length-2] !== "")?splited[splited.length-2]:"Unknown";
+
+               tempSong = {};
+               tempSong.songArtist = songArtist;
+               tempSong.songAlbum = songAlbum;
+               tempSong.songFileName = splited[splited.length-1];
+               tempSong.songPath = songFullPath.replace(tempSong.songFileName,"");
+                 // console.log(tempSong);      
+                 songList.push(tempSong);     
+               }        
+             // console.log(songList);
+              endedLoading = true;
+              results = null;
+        });
+
+
+     var interv = setInterval(function(){
+        if(endedLoading){
+           clearInterval(interv);
+           var i = 0;
+           var count = songList.length;
+           getArrayMd3(i,count);
+        }
+
+     },1000);
+
+};
 
 //var mp3t = require('../lib/mp3Tools');
 
@@ -153,13 +156,15 @@ var getArrayMd3 = function(index, total){
                         songList[index].track = res.track?res.track:"";
                         songList[index].pic = "";
 
-                        //logger.info(JSON.stringify({"perc":perc,"song":songList[index].songName}));
-                        console.log(JSON.stringify({"perc":perc,"song":songList[index].songName}));
+                        logger.info(JSON.stringify({"perc":perc,"song":songList[index].songName}));
+                       glbExtOnLoading({"perc":perc,"song":songList[index].songName});
+                     //   console.log(JSON.stringify({"perc":perc,"song":songList[index].songName}));
                         
                         walkIMG(songList[index].songPath, function(err, results) {
                             if (err) {
                                 //throw err
                                 //logger.info(JSON.stringify({"error":err}));
+                                glbExtOnLoading({"error":err});
                                 console.log(JSON.stringify({"error":err}));
                                 return ;
                             };
@@ -173,6 +178,7 @@ var getArrayMd3 = function(index, total){
                             }
                             catch(err) {
                             //    logger.info(JSON.stringify({"error":err}));
+                                glbExtOnLoading({"error":err});
                                 console.log(JSON.stringify({"error":err}));
                             }
                             finally{
@@ -193,13 +199,21 @@ var getArrayMd3 = function(index, total){
        fs.writeFile(homePath+"/json/catalog.json", JSON.stringify(cat2Save),function(err){
             if(err){
               //  logger.info(JSON.stringify({"error":err}));
+                glbExtOnLoading({"error":err});
                 console.log(JSON.stringify({"error":err}));
             } 
             else {
               //  logger.info(JSON.stringify({"done":true}));
+              glbExtOnLoading({"done":true});
                 console.log(JSON.stringify({"done":true}));
             }
+            glbExtOnFinish();
        });
        return;
     }
+};
+
+
+module.exports = {
+  initLoading: initLoading
 };

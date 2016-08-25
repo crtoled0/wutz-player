@@ -16,6 +16,8 @@ app.on('window-all-closed', function() {
   if (process.platform != 'darwin') {
     app.quit();
   }
+  
+  
 });
 
 ipcMain.on('setFullScreen', function(event, arg) {
@@ -35,6 +37,28 @@ ipcMain.on('toogFullScreen', function(event, arg) {
    event.returnValue = true;
 });
 
+
+ipcMain.on('exitAndRunInstaller', function(event, arg) {
+  //event.returnValue = app.getAppPath();
+  
+  var child = require('child_process');
+  child.fork("D:/WorkP/projects/electron/WutzPlayer/js/jobs/executeUpdateInstaller.js");
+  
+   // if (mainWindow)
+     //      mainWindow.close();
+     
+     
+     event.returnValue = true;
+});
+
+ipcMain.on('justClose', function(event, arg) {
+  //event.returnValue = app.getAppPath();
+  
+    if (mainWindow)
+           mainWindow.close();
+    
+    event.returnValue = true;
+});
 
 
 ipcMain.on('getAppPath', function(event, arg) {

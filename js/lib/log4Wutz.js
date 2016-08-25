@@ -23,6 +23,7 @@ var homePath = os.homedir()+"/.wutz";
 
 if (!fs.existsSync(homePath)){
         fs.mkdirSync(homePath);
+        fs.mkdirSync(homePath+"/updates");
         fs.mkdirSync(homePath+"/json");
         fs.mkdirSync(homePath+"/logs");
         fs.mkdirSync(homePath+"/img");

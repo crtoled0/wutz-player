@@ -15,9 +15,13 @@
 	  'btn-error': '<i class="fa fa-remove"></i>',
 	  'msg-login-success': 'Good ... Loading Bar',
 	  'msg-login-error-pass': 'Password incorrect',
-          'msg-login-error-usr': "User doesn't exist",
-          'msg-catload-success': 'The catalog was uploaded correctly',
-          'msg-catload-error': 'Catalog update failed' 
+    'msg-login-error-usr': "User doesn't exist",
+    'msg-catload-success': 'The catalog was uploaded correctly',
+    'msg-catload-error': 'Catalog update failed' ,
+    'new-upgrade-avail':'Nueva version disponible, click aca para descargar',
+    'new-upgrade-installing':'Abriendo navegador por defecto',
+    'new-upgrade-installed':'La nueva descarga debio iniciar en su navegador, una vez descargado inicie el instalador. Click aqui para cerrar aplicacion ',
+    'new-upgrade-failed':'Ocurrio un error actualizando la aplicacion, Intentelo mas tarde'
   };	// Login Form
 	//----------------------------------------------
 	// Validation
@@ -171,7 +175,6 @@
                     remove_loading($("#configDiv form"));
                     form_failed($("#configDiv form"), "Catalog is not loaded<br/>");
                     return false;
-
                 }
                 else if(config.latitude === "" || config.longitute===""){
                     //loadSectionPage("config3");
@@ -309,6 +312,41 @@
   	fform.find('[type=submit]').addClass('error').html(options['btn-error']);
   	fform.find('.login-form-main-message').addClass('show error').html(msg2disp);
   }
+  
+  
+  function check4updates(){
+      
+      console.log("Checking Updates");
+      var updMan = require("./js/lib/updatesAdmin");
+      
+      updMan.checkUpdates(function(res){
+          logger.info("We are back" + JSON.stringify(res));
+          if(!res.updated){
+              var update2Install = res.update2Install;
+              $("#topMessageContainer span").html(options['new-upgrade-avail']);
+              $("#topMessageContainer #vers2Udt").attr("value",update2Install);
+              
+              $("#topMessageContainer span").click(function(){
+                  
+                  $("#topMessageContainer span").html(options['new-upgrade-installing']);
+                    updMan.applyUpdates(function(update){
+
+                        if(update.downloading){
+                            $("#topMessageContainer span").html(options['new-upgrade-installed']);
+                            $("#topMessageContainer span").click(function(){
+                                updMan.closeAndOpenInstaller();
+                            });
+                        }
+                        else{
+                            $("#topMessageContainer span").html(options['new-upgrade-failed']);
+                        }
+                        
+                    });
+              });
+              $("#topMessageContainer").animate({"top":"0px","height":"30px"},2000);
+          }
+      });
+  }
 
 	// Dummy Submit Form (Remove this)
 	//----------------------------------------------
@@ -368,6 +406,7 @@
   }
   $(document).ready(function() {
       
+      check4updates();
       if(window.sessionStorage.getItem("logged"))
           checkBarStatusStatus();
   });

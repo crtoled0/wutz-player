@@ -5,6 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "id3-parser": "^1.0.2",
+    "open": "0.0.5",
     "request": "^2.74.0",
     "winston": "2.2.0"
   },

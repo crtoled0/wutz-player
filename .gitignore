@@ -1,8 +1,8 @@
-/nbproject/project.properties
-/nbproject/project.xml
+/nbproject
 /Wutz-Player-win32-ia32/resources/app/node_modules/
 /Wutz-Player-win32-ia32/resources/app/nbproject/private/
 /Wutz-Player-win32-x64/resources/app/node_modules/
 /Wutz-Player-win32-x64/resources/app/nbproject/private/
 /Wutz-Player-win32-ia32/
 /Wutz-Player-win32-x64/
+node_modules/

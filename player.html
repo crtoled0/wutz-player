@@ -83,7 +83,10 @@
 </div>
 <div id="headerMenu">
       <ul>
-          <li data-bind="click: setFullScreen"><img src="img/plus-white.png" /> Full Screen</li>
+          <li data-bind="click: setFullScreen">
+              <img data-bind="attr:{'src':fullScr().imgSrc}" /> 
+              <span data-bind="html:fullScr().text"></span>
+          </li>
           <li data-bind="click: exitPlayer"><img src="img/delete-white.png" /> Exit Player</li>
           <li data-bind="click: toogleHeaderMenu"><img src="img/back-white.png" /> Cancel</li>
       </ul>

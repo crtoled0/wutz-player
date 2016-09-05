@@ -1,6 +1,6 @@
 var fs = require('fs');
-var ID3 = require('id3-parser');
-var stream = require('stream');
+var ID3 = require("jsmediatags");//require('id3-parser');
+//var stream = require('stream');
 var os = require('os');
 //var logger = require('./log4Wutz');
 
@@ -19,29 +19,30 @@ exports.getAndLoadSong = function(song) {
 **/
 
 
-exports.getTagsFromPath = function(songPath, callback){
+var getTagsFromPath = function(songPath, callback){
     
-    var fileBuffer = fs.readFileSync(songPath);
-    ID3.parse(fileBuffer).then(function (tag) {
-        callback(tag);
+    ID3.read(songPath, {
+            onSuccess: function(tags) {
+              var res = tags["tags"];
+              //console.log(res);
+              callback(res);
+            },
+            onError: function(error) {
+              logger.info(':(', error.type, error.info);
+            }
     });
 };
 
 
-exports.getAllTags = function(song, callback){
+var getAllTags = function(song, callback){
     var filPath = song.file_path;
     var filName = song.file_name;  
     var songPath = filPath+"/"+filName;
-    // filePath as string 
-    var fileBuffer = fs.readFileSync(songPath);
-
-    ID3.parse(fileBuffer).then(function (tag) {
-       // console.log(tag);
-        callback(tag);
-    });
+    getTagsFromPath(songPath, callback);
+   
 };
 
-exports.loadFrontAlbumPic = function(song, callback){
+var loadFrontAlbumPic = function(song, callback){
     var filPath = song.file_path;
     var filName = song.file_name;  
     var songPath = filPath+"/"+filName;
@@ -62,15 +63,15 @@ exports.loadFrontAlbumPic = function(song, callback){
         }
         
         if(fs.existsSync(songPath)){
-            var fileBuffer = fs.readFileSync(songPath);
-            ID3.parse(fileBuffer).then(function (tag) {
+           // var fileBuffer = fs.readFileSync(songPath);
+            getTagsFromPath(songPath,function (tag) {
 
-                if(!tag.image){
+                if(!tag.picture){
                    // callback(song);
                     return;
                 }
                 //logger.info(tag);
-                var mime = tag.image.mime;
+                var mime = tag.picture.format;
                 var picExt = mime==="image/png"?"png":"jpg";
                 var picPathName = homePath+"/img/fronts/"+tag.album+"."+picExt;
                 song.pic = picPathName;
@@ -81,11 +82,11 @@ exports.loadFrontAlbumPic = function(song, callback){
                     return;
                 }
                 else{
-                    var imgDataArr = tag.image.data;
-                    var myStream = new stream.Readable();
+                 //   var imgDataArr = tag.image.data;
+                 //   var myStream = new stream.Readable();
                     var i = 0;
                     fs.createWriteStream(picPathName);
-                    fs.appendFile(picPathName, new Buffer(tag.image.data), function (err) {
+                    fs.appendFile(picPathName, new Buffer(tag.picture.data), function (err) {
                         if (err) {
                          // logger.info(err);
                         } else {
@@ -110,4 +111,12 @@ exports.loadFrontAlbumPic = function(song, callback){
        callback(song);
        return ;
    }
+};
+
+
+
+module.exports = {
+  loadFrontAlbumPic: loadFrontAlbumPic,
+  getAllTags: getAllTags,
+  getTagsFromPath: getTagsFromPath
 };

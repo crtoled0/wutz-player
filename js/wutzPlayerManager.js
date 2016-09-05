@@ -4,6 +4,8 @@ function AppViewModel() {
     mainMod = this;
     mainMod.playList = ko.observableArray([]); 
     mainMod.filePlaying = ko.observable();
+    mainMod.fullScr = ko.observable({"imgSrc":"img/plus-white.png","text":"Full Screen"});
+    
     
     //mainMod.picMap = ko.observable({"others":"./img/fronts/defaultSong.png"});
     
@@ -304,6 +306,13 @@ this.loadFullCatalogReturn = function(jsonRes){
         var menuObj = $("#headerMenu");
         menuObj.animate({width:"0px"},1000);
         ipc.sendSync('toogFullScreen');
+        
+        if(mod.fullScr().text === "Full Screen"){
+            mod.fullScr({"imgSrc":"img/minus-white.png","text":"Exit Full Screen"});
+        }
+        else{
+            mod.fullScr({"imgSrc":"img/plus-white.png","text":"Full Screen"});
+        }
         
           $(document).keyup(function(e) {
             if (e.keyCode == 27) { // escape key maps to keycode `27`

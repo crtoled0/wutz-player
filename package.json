@@ -1,10 +1,10 @@
 {
   "name": "Wutz-Player",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "id3-parser": "^1.0.2",
+    "jsmediatags": "^3.2.1",
     "open": "0.0.5",
     "request": "^2.74.0",
     "winston": "2.2.0"

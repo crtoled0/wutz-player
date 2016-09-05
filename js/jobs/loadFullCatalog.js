@@ -1,10 +1,11 @@
 var fs = require('fs');
 var path = require('path');
-var id3 = require('id3-parser');
 var os = require('os');
+var jsmediatags = require("jsmediatags");
 
-var StringDecoder = require('string_decoder').StringDecoder;
-var decoder = new StringDecoder('utf8');
+
+//var StringDecoder = require('string_decoder').StringDecoder;
+//var decoder = new StringDecoder('utf8');
 
 
 var logger = require('../lib/log4Wutz');
@@ -91,7 +92,6 @@ var initLoading = function(onLoading, onFinish){
                 var songFullPath = results[i];
                var songRelPath = songFullPath.replace(musPath,"");
                songRelPath = JSON.parse( JSON.stringify( songRelPath ) );
-
                var splited = songRelPath.split(sep);
 
                var songArtist = (splited[1] !== "")?splited[1]:"Others";
@@ -127,20 +127,19 @@ var initLoading = function(onLoading, onFinish){
 
 //var strUtls = id3.StringUtils;
 var getArrayMd3 = function(index, total){
-  
-  //var StringUtils = require("StringUtils");
-  
+
     if(index < total){
-        var fileBuffer = fs.readFileSync(songList[index].songPath+sep+songList[index].songFileName);
-        id3.parse(fileBuffer).then(function (res){
-      //  mp3t.getTagsFromPath(songList[index].songPath+sep+songList[index].songFileName, function(res){
-           // var tit = new Buffer(res.title);
-            
-      //   console.log(Encoding.Unicode.GetString(res.title));
-                      //  logger.info(tit.toString("utf-8",0,20) + " : "+decoder.write(tit));
-                        
-                        
-                        var perc = Math.round((index/total)*100)+"%";
+     //   var fileBuffer = fs.readFileSync(songList[index].songPath+sep+songList[index].songFileName);
+        
+        try{
+          new jsmediatags.Reader(songList[index].songPath+sep+songList[index].songFileName)
+                  .setTagsToRead(["title", "album", "track"])
+                  .read({
+            onSuccess: function(tags) {
+              var res = tags["tags"];
+            //  logger.info("How it looks null ? : album " + res.album);
+              console.log(res);
+               var perc = Math.round((index/total)*100)+"%";
                        // console.log("["+Math.round((index/total)*100)+"%] Loaded");
                         songList[index].songName = res.title?res.title.replace("  "," "):songList[index].songFileName;
                         var id3Artist = songList[index].songArtist;//res.artist?res.artist.replace("  "," "):songList[index].songArtist; 
@@ -155,9 +154,13 @@ var getArrayMd3 = function(index, total){
                         songList[index].songName = (songList[index].songName.replace(".mp3","")).replace(".m4a","");
                         songList[index].track = res.track?res.track:"";
                         songList[index].pic = "";
+                        
+                        //logger.info(songList[index].songAlbum + " : :" + songList[index].track);
+                        
+                        songList[index].songFileName = (songList[index].songFileName).replace(/\+/ig,"%2B");
 
-                        logger.info(JSON.stringify({"perc":perc,"song":songList[index].songName}));
-                       glbExtOnLoading({"perc":perc,"song":songList[index].songName});
+                        logger.info(JSON.stringify({"perc":perc,"song":songList[index].songFileName}));
+                       glbExtOnLoading({"perc":perc,"song":songList[index].songFileName});
                      //   console.log(JSON.stringify({"perc":perc,"song":songList[index].songName}));
                         
                         walkIMG(songList[index].songPath, function(err, results) {
@@ -187,9 +190,23 @@ var getArrayMd3 = function(index, total){
                                 getArrayMd3(index, total);
                             }
                         });
-                        
-                       
+            },
+            onError: function(error) {
+              logger.info('Cant load  ID3 info:(', error.type, error.info);
+              //res = null;
+              index++;
+              getArrayMd3(index, total);
+            }
+          });
+      }
+      catch(e){
+          logger.info("Te pille gonshetumare ... "+e);
+      }
+        /**
+        id3.parse(fileBuffer).then(function (res){
+          
         });
+        **/
     }
     else{
        var cat2Save = {};

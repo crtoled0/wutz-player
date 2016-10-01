@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+Copyright (C) 2016 CRTOLEDO.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA 02110-1301  USA
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .fullscreenvideo{
+                min-width: 100%;
+                min-height: 100%;
+                width: auto;
+                height: auto;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-50%);
+                z-index: -100;
+                background-size: cover;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <div id="videoPlaying"></div>
+    </body>
+    <script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>
+    <script type="text/javascript">
+        var tempSong = {songid:"123456",
+                        filename:"C:/Users/CRTOLEDO/Music/The Gathering/GATHERINGVIDidEOS/video/The Gathering - You Learn About It .webm"};
+        var audioHtml = "<video width=\"200\" height=\"30\" class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"none\"> ";
+            audioHtml += "<source src=\""+tempSong.filename+"\" type=\"video/webm\">";
+            audioHtml += "</video>";
+        
+        console.log(audioHtml);
+        
+        $("#videoPlaying").append(audioHtml);
+        
+       // $("#"+tempSong.songid).get(0).webkitEnterFullScreen();
+       // $("#"+tempSong.songid).get(0).play();
+        //$("#"+tempSong.songid).addClass("fullscreenvideo");
+        
+        
+        //$("#"+tempSong.songid).removeClass("fullscreenvideo");
+        
+        //document.getElementById("#"+tempSong.songid).getElementsByTagName("source")[0].webkitEnterFullScreen();
+        
+    </script>
+</html>

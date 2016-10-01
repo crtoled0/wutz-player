@@ -1,3 +1,23 @@
+/* 
+ * Copyright (C) 2016 CRTOLEDO.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+
+
 var fs = require('fs');
 var path = require('path');
 var os = require('os');
@@ -10,7 +30,7 @@ var jsmediatags = require("jsmediatags");
 
 var logger = require('../lib/log4Wutz');
 
-var walkMP3 = function(dir, done) {
+var walkMedia = function(dir, done) {
   var results = [];
   fs.readdir(dir, function(err, list) {
     if (err) return done(err);
@@ -20,13 +40,17 @@ var walkMP3 = function(dir, done) {
       file = path.resolve(dir, file);
       fs.stat(file, function(err, stat) {
         if (stat && stat.isDirectory()) {
-          walkMP3(file, function(err, res) {
+          walkMedia(file, function(err, res) {
             results = results.concat(res);
             if (!--pending) done(null, results);
           });
         } 
         else {
-          if(file.toLowerCase().indexOf(".mp3") !== -1 || file.toLowerCase().indexOf(".m4a") !== -1) {
+          if(file.toLowerCase().indexOf(".mp3") !== -1 || 
+             file.toLowerCase().indexOf(".m4a") !== -1 || 
+             file.toLowerCase().indexOf(".mp4") !== -1  || 
+             file.toLowerCase().indexOf(".ogg") !== -1 || 
+             file.toLowerCase().indexOf(".webm") !== -1) {
                 results.push(file);
           }
           if (!--pending) done(null, results);
@@ -82,34 +106,46 @@ var initLoading = function(onLoading, onFinish){
     
    glbExtOnLoading = onLoading;
    glbExtOnFinish = onFinish;
-    
-        walkMP3(musPath, function(err, results) {
+
+   walkMedia(musPath, function(err, results) {
            //  console.log("Looping Folders");
-             if (err) throw err;
+                if (err) throw err;
 
-             for(var i=0;i< results.length;i++){
+                for(var i=0;i< results.length;i++){
 
-                var songFullPath = results[i];
-               var songRelPath = songFullPath.replace(musPath,"");
-               songRelPath = JSON.parse( JSON.stringify( songRelPath ) );
-               var splited = songRelPath.split(sep);
+                  var songFullPath = results[i];
+                  var songRelPath = songFullPath.replace(musPath,"");
+                  songRelPath = JSON.parse( JSON.stringify( songRelPath ) );
+                  var splited = songRelPath.split(sep);
 
-               var songArtist = (splited[1] !== "")?splited[1]:"Others";
-               var songAlbum = (splited[splited.length-2] !== "")?splited[splited.length-2]:"Unknown";
+                  var songArtist = (splited[1] !== "")?splited[1]:"Others";
+                  var songAlbum = (splited[splited.length-2] !== "")?splited[splited.length-2]:"Unknown";
 
-               tempSong = {};
-               tempSong.songArtist = songArtist;
-               tempSong.songAlbum = songAlbum;
-               tempSong.songFileName = splited[splited.length-1];
-               tempSong.songPath = songFullPath.replace(tempSong.songFileName,"");
-                 // console.log(tempSong);      
-                 songList.push(tempSong);     
-               }        
-             // console.log(songList);
-              endedLoading = true;
-              results = null;
-        });
+                  tempSong = {};
+                  tempSong.songArtist = songArtist;
+                  tempSong.songAlbum = songAlbum;
+                  tempSong.songFileName = splited[splited.length-1];
+                  tempSong.songPath = songFullPath.replace(tempSong.songFileName,"");
+                  tempSong.track = "";
+                  tempSong.pic = "";
+                  var extAr = tempSong.songFileName.split(".");
+                  var ext = extAr[extAr.length-1];
+                  tempSong.songName = extAr[0];
+                  tempSong.extension = ext;
+                  if(ext.toLowerCase().indexOf("mp3") !== -1 || ext.toLowerCase().indexOf("m4a") !== -1){
+                      tempSong.mediaType = "audio";
+                  }
+                  else{
+                      tempSong.mediaType = "video";
+                  }
 
+                    // console.log(tempSong);      
+                    songList.push(tempSong);     
+                  }        
+                // console.log(songList);
+                 endedLoading = true;
+                 results = null;
+     });
 
      var interv = setInterval(function(){
         if(endedLoading){
@@ -117,7 +153,7 @@ var initLoading = function(onLoading, onFinish){
            var i = 0;
            var count = songList.length;
            getArrayMd3(i,count);
-        }
+      }
 
      },1000);
 
@@ -200,7 +236,7 @@ var getArrayMd3 = function(index, total){
           });
       }
       catch(e){
-          logger.info("Te pille gonshetumare ... "+e);
+          logger.info("Te pille  ... "+e);
       }
         /**
         id3.parse(fileBuffer).then(function (res){

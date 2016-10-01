@@ -80,7 +80,9 @@ this.loadAndPlaySong = function(song){
    
     try{
       
-      if($.inArray(song.songid,brokenSongs) === -1){       
+      if($.inArray(song.songid,brokenSongs) === -1){
+        if(song.media_type === "video")
+            $("#"+song.songid).addClass("fullscreenvideo");
         $("#"+song.songid).get(0).play();        
         mainMod.songChecker($("#"+song.songid).get(0));
       }
@@ -111,6 +113,9 @@ this.songChecker = function(audioMedia){
         {
             clearInterval ( inter );
             logger.info("Song Ended");
+            if(mainMod.playList()[0].media_type === "video"){
+               $("#"+mainMod.playList()[0].songid).removeClass("fullscreenvideo");
+            }
             if(mainMod.playList().length > 0)
                 mainMod.goNextQueue();
             else{
@@ -215,9 +220,18 @@ this.loadFullCatalogReturn = function(jsonRes){
         var filPath = tempSong.file_path;
         var filName = tempSong.file_name;  
         var fileName = filPath+"/"+filName;
-         var audioHtml = "<audio class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"none\"> ";
+        
+        var audioHtml = "";
+        if(tempSong.media_type === "audio"){
+             audioHtml = "<audio class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"none\"> ";
              audioHtml += "<source src=\""+fileName+"\" type=\"audio/mpeg\">";
              audioHtml += "</audio>";
+         }
+         else{
+            audioHtml = "<video width=\"204\" height=\"40\" class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"none\"> ";
+            audioHtml += "<source src=\""+fileName+"\" type=\"video/webm\">";
+            audioHtml += "</video>";
+         }
          tempSong.htmlAudioObject = audioHtml;
          mainMod.playList.push(tempSong);
         mp3t.loadFrontAlbumPic(tempSong, function(song){

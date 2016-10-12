@@ -132,7 +132,7 @@ var initLoading = function(onLoading, onFinish){
                   var ext = extAr[extAr.length-1];
                   tempSong.songName = extAr[0];
                   tempSong.extension = ext;
-                  if(ext.toLowerCase().indexOf("mp3") !== -1 || ext.toLowerCase().indexOf("m4a") !== -1){
+                  if(["mp3","m4a"].indexOf(ext.toLowerCase()) !== -1){
                       tempSong.mediaType = "audio";
                   }
                   else{

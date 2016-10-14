@@ -16,6 +16,7 @@ var logger = require('./js/lib/log4Wutz');
 var ipc = require('electron').ipcRenderer;
 
 var brokenSongs = [];
+var ytMap = {};
 
 $(document).ready(function() {
     
@@ -81,10 +82,15 @@ this.loadAndPlaySong = function(song){
     try{
       
       if($.inArray(song.songid,brokenSongs) === -1){
-        if(song.media_type === "video")
+        if(song.media_type === "video" && song.extension !== "tube")
             $("#"+song.songid).addClass("fullscreenvideo");
-        $("#"+song.songid).get(0).play();        
-        mainMod.songChecker($("#"+song.songid).get(0));
+        if(song.extension !== "tube"){
+            $("#"+song.songid).get(0).play();        
+            mainMod.songChecker($("#"+song.songid).get(0));
+        }
+        else{
+            this.playYTSong(song.songid);
+        }
       }
       else{
           logger.info("ERROR LOADING SONG : ["+song.songid+"]");
@@ -125,6 +131,18 @@ this.songChecker = function(audioMedia){
                 
         }
     }, 1000 );
+};
+
+this.youtubeEndSong = function(){
+   
+            logger.info("Youtube Song Ended");
+            //$("#"+mainMod.playList()[0].songid).removeClass("fullscreenvideo");
+            if(mainMod.playList().length > 0)
+                mainMod.goNextQueue();
+            else{
+                mainMod.checkEmptyList();
+                mainMod.loadAndPlayRandomSong();
+            }
 };
 
 this.goNextQueue = function(){
@@ -208,6 +226,7 @@ this.loadFullCatalogReturn = function(jsonRes){
     
     //var firstOne = true;
     var mp3t = require('./js/lib/mp3Tools');
+    //var mainMod = this;
     
     var areNewSongs = false;
     $.each(jsonRes,function(i, value)
@@ -227,24 +246,45 @@ this.loadFullCatalogReturn = function(jsonRes){
              audioHtml += "<source src=\""+fileName+"\" type=\"audio/mpeg\">";
              audioHtml += "</audio>";
          }
-         else{
+         else if(tempSong.media_type === "video" && tempSong.extension !== "tube"){
             audioHtml = "<video width=\"204\" height=\"40\" class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"none\"> ";
             audioHtml += "<source src=\""+fileName+"\" type=\"video/webm\">";
             audioHtml += "</video>";
          }
+         else if(tempSong.extension === "tube"){
+              audioHtml = "<img src=\"./img/youtubeSmall.png\" width=\"40px\" />"; 
+         }
          tempSong.htmlAudioObject = audioHtml;
          mainMod.playList.push(tempSong);
-        mp3t.loadFrontAlbumPic(tempSong, function(song){
-            //tempSong.pic =  imgPath;
-            if(song.err === undefined)
-                $("#cont_"+song.songid+" img").attr("src",song.pic);
-            else{
-                logger.info("Song With Issues : "+song.songid+"["+song.file_name+"]["+song.exc+"]");
-                brokenSongs.push(song.songid);
-              //  mainMod.removeSongFromPlaylist(song.songid,song.client_guid)
-            }
-        });
-        
+         if(tempSong.extension !== "tube"){
+              //  mainMod.playList.push(tempSong);
+                mp3t.loadFrontAlbumPic(tempSong, function(song){
+                    //tempSong.pic =  imgPath;
+                    if(song.err === undefined)
+                        $("#cont_"+song.songid+" img").attr("src",song.pic);
+                    else{
+                        logger.info("Song With Issues : "+song.songid+"["+song.file_name+"]["+song.exc+"]");
+                        brokenSongs.push(song.songid);
+                      //  mainMod.removeSongFromPlaylist(song.songid,song.client_guid)
+                    }
+                });
+          }
+          else{
+              console.log("Youtube condition");
+              ytMap[tempSong.songid] = filName;
+              YTPlay.loadNewVideo({"videoId":filName,"objectId":"cont_"+tempSong.songid},
+                    function(_player){
+                      //  console.log("Back From Lib "+_player);
+                      //  _player.playVideo();
+                        //mainMod.findAndAddYTPlayer(songId, player);
+                        //tempSong["ytPlayer"] = player;
+                        
+                    },
+                    function(){
+                       // mainMod.youtubeEndSong();
+                       //console.log("Ya termino tema ?");
+                    });
+          }
      });
      if(areNewSongs){
                 $("[data-carousel-3d]").html($("#cleanCarousel").html());
@@ -255,6 +295,22 @@ this.loadFullCatalogReturn = function(jsonRes){
                 $(".sliderCol span").textSlider();
     }
 };
+
+  this.playYTSong = function(songId){
+      mainMod = this;
+      var vidCont = $("<div id=\"ytVideoCont\" class=\"fullscreenvideo\"></div>");
+      $("body").append(vidCont);
+      
+      YTPlay.loadNewVideo({"videoId":ytMap[songId],"objectId":"ytVideoCont"},
+             function(_player){
+                       _player.playVideo();
+                    },
+                    function(){
+                        console.log("Ya termino tema ?");
+                        $("#ytVideoCont").remove();
+                        mainMod.youtubeEndSong();
+                    });
+  };
 
     this.checkEmptyList = function(){
 

@@ -50,6 +50,7 @@ var walkMedia = function(dir, done) {
              file.toLowerCase().indexOf(".m4a") !== -1 || 
              file.toLowerCase().indexOf(".mp4") !== -1  || 
              file.toLowerCase().indexOf(".ogg") !== -1 || 
+             file.toLowerCase().indexOf(".tube") !== -1 || 
              file.toLowerCase().indexOf(".webm") !== -1) {
                 results.push(file);
           }
@@ -138,6 +139,11 @@ var initLoading = function(onLoading, onFinish){
                   else{
                       tempSong.mediaType = "video";
                   }
+                  if("tube".indexOf(ext.toLowerCase()) !== -1){
+                     // tempSong.mediaType = "youtube";
+                      tempSong.songPath = "http://youtube.com/embed/";
+                      tempSong.songFileName = fs.readFileSync(songFullPath).toString();
+                  }
 
                     // console.log(tempSong);      
                     songList.push(tempSong);     
@@ -168,6 +174,13 @@ var getArrayMd3 = function(index, total){
      //   var fileBuffer = fs.readFileSync(songList[index].songPath+sep+songList[index].songFileName);
         
         try{
+                songList[index].songArtist = songList[index].songArtist.capitalize();
+                songList[index].songAlbum = songList[index].songAlbum.capitalize();
+                var ext = songList[index].extension;
+                songList[index].songName = songList[index].songName.replace(ext,"");
+                songList[index].track = "";
+                songList[index].pic = "";
+         if(songList[index].extension !== "tube"){ 
           new jsmediatags.Reader(songList[index].songPath+sep+songList[index].songFileName)
                   .setTagsToRead(["title", "album", "track"])
                   .read({
@@ -185,9 +198,10 @@ var getArrayMd3 = function(index, total){
                         //id3Artist.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g,"");
                         //id3Album = id3Album.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g,"");
                         
+                        var ext = songList[index].extension;
                         songList[index].songArtist = id3Artist;
                         songList[index].songAlbum = id3Album;
-                        songList[index].songName = (songList[index].songName.replace(".mp3","")).replace(".m4a","");
+                        songList[index].songName = songList[index].songName.replace(ext,"");
                         songList[index].track = res.track?res.track:"";
                         songList[index].pic = "";
                         
@@ -234,6 +248,12 @@ var getArrayMd3 = function(index, total){
               getArrayMd3(index, total);
             }
           });
+         }
+         else{
+             index++;
+             getArrayMd3(index, total);
+         }
+          
       }
       catch(e){
           logger.info("Te pille  ... "+e);

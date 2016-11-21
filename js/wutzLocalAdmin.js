@@ -399,11 +399,14 @@
   function runCatalogLoad(){
     catAdm.getCatalogFromFileSystem();
   }
+  
+  $("#refreshCurrCat").click(function(){
+      catAdm.sendCat2WutzCloud(function(_config){
+           config = _config;
+           $("#catLoadingBox").html("Process Finished"); 
+      });
+  });
 
-  function sendCatalog2Cloud(){
-        
-        catAdm.sendCat2Cloud();
-  }
   $(document).ready(function() {
       
       check4updates();

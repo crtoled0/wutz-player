@@ -27,12 +27,12 @@
 	var WutzAdminConnImpl = {
 	    _version : 0.1,
 	    _config : {
-		'wutzAdminHost' : 'http://wutznet.com'
+		wutzAdminHost : 'http://wutznet.com'
 	    },
             callService : function(service,params,method,callback){
                 
                 var mySelf = this;
-                params = JSON.stringify(params);        
+                params = JSON.stringify(params);
                 $.ajax({
                         type: method,
                         dataType: 'json',

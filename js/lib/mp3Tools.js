@@ -2,7 +2,7 @@ var fs = require('fs');
 var ID3 = require("jsmediatags");//require('id3-parser');
 //var stream = require('stream');
 var os = require('os');
-//var logger = require('./log4Wutz');
+var logger = require('./log4Wutz');
 
  var homePath = os.homedir()+"/.wutz";
 
@@ -29,6 +29,7 @@ var getTagsFromPath = function(songPath, callback){
             },
             onError: function(error) {
               logger.info(':(', error.type, error.info);
+              return ;
             }
     });
 };
@@ -62,6 +63,19 @@ var loadFrontAlbumPic = function(song, callback){
             }
         }
         
+        if(song.album_info){
+            var albInfo = JSON.parse(song.album_info);
+            if(albInfo && albInfo.album && albInfo.album.image){
+                albInfo.album.image.forEach(function(imgNode){
+                     if(imgNode.size === "large"){
+                         song.pic = imgNode["#text"];
+                         callback(song);
+                         return ;
+                     }
+                });
+            }
+        }
+        
         if(fs.existsSync(songPath)){
            // var fileBuffer = fs.readFileSync(songPath);
             getTagsFromPath(songPath,function (tag) {
@@ -88,7 +102,8 @@ var loadFrontAlbumPic = function(song, callback){
                     fs.createWriteStream(picPathName);
                     fs.appendFile(picPathName, new Buffer(tag.picture.data), function (err) {
                         if (err) {
-                         // logger.info(err);
+                            logger.info(err);
+                            return ;
                         } else {
                           //logger.info("File Size "+ tag.image.data.length);
                           //logger.info("File Created");

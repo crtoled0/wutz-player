@@ -204,7 +204,8 @@ var getArrayMd3 = function(index, total){
                         songList[index].songName = songList[index].songName.replace(ext,"");
                         songList[index].track = res.track?res.track:"";
                         songList[index].pic = "";
-                        
+                        songList[index].songArtist = songList[index].songArtist.trim();
+                        songList[index].songAlbum = songList[index].songAlbum.trim();
                         //logger.info(songList[index].songAlbum + " : :" + songList[index].track);
                         
                         songList[index].songFileName = (songList[index].songFileName).replace(/\+/ig,"%2B");

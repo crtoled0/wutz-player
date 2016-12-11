@@ -1,7 +1,7 @@
 {
-  "name": "Wutz-Player",
-  "version": "1.0.4",
-  "description": "",
+  "name": "WutzPlayer",
+  "version": "1.0.5",
+  "description": "Player for Wutz",
   "main": "main.js",
   "dependencies": {
     "jsmediatags": "^3.2.1",
@@ -10,11 +10,15 @@
     "winston": "2.2.0"
   },
   "devDependencies": {
-    "electron-prebuilt": "^0.35.6"
+    "electron-installer-windows": "^0.2.0",
+    "electron-prebuilt": "^0.35.6",
+    "uglify-js": "^2.7.5"
   },
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "build": "node build.js",
+    "createWinInstaller": "node installer.js"
   },
-  "author": "Cristian Toledo",
+  "author": "http://wutznet.com",
   "license": "ISC"
 }

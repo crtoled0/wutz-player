@@ -16,11 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
+var path = require('path');
 var ipc = require('electron').ipcRenderer;
-var localAppPath = ipc.sendSync('getAppPath');
-if(ipc.sendSync('isDevMode'))
-    localAppPath = "./";
+//var localAppPath = ipc.sendSync('getAppPath');
+var localAppPath = path.dirname(process.mainModule.filename);
+//if(ipc.sendSync('isDevMode'))
+   // localAppPath = "./";
     
 var fs = require('fs');
 var os = require('os');
@@ -60,7 +61,7 @@ var checkUpdates = function(callback){
        logger.info("Is there something to Update ? : "+JSON.stringify(result));
        var up = {};
        up.updated=false;
-       var localVersionPath =  localAppPath + "/package.json";
+       var localVersionPath =  localAppPath + "/package.json"; // require('./package.json');
        var lastUpdatedVersion = result["update-version"];
        logger.info("lastUpdatedVersion: "+lastUpdatedVersion);
        logger.info("localVersionPath : "+localVersionPath);

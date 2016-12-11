@@ -14,6 +14,7 @@ body {
     font-family: 'trebuchet MS', 'Lucida sans', Arial;
     font-size: 14px;
     color: #444;
+    background: url(../img/bottomPlayer.jpg) bottom left no-repeat fixed;
 }
 
 table {
@@ -38,7 +39,8 @@ table {
     -webkit-transition: all 0.1s ease-in-out;
     -moz-transition: all 0.1s ease-in-out;
     -ms-transition: all 0.1s ease-in-out;
-    transition: all 0.1s ease-in-out;     
+    transition: all 0.1s ease-in-out;
+    color: #000000;
 }    
     
 .bordered td {
@@ -61,7 +63,6 @@ table {
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset; 
     box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
     border-top: none;
-    text-shadow: 0 1px 0 rgba(255,255,255,.5); 
     color: #FFFFcc; 
 }
 
@@ -103,7 +104,9 @@ table {
     border-radius: 0 0 6px 0;
 }
 
-
+.bordered tr{
+    color: #00FF00;
+}
 
 /*----------------------*/
 
@@ -116,7 +119,7 @@ table {
     background: #f5f5f5;
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset; 
     -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;  
-    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;        
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
 }
 
 .zebra th {
@@ -176,7 +179,11 @@ table {
 
 .playingRow
 {
-   background: #fbf8e9;
+   background: #000000;
+}
+.playingRow td:first-child
+{
+   background: transparent;
 }
 /** New Version **/
 .wrapper {

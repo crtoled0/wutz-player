@@ -35,6 +35,20 @@
     });
  };
  
+ var pullCatalog2Gen = function(catId, callback){
+     var options = {
+              method : "GET",
+              url: "http://localhost:8001/WutzAdmin/pullCat2Gen/"+catId,
+              headers: {
+                    "Content-Type":"application/json"
+              }
+    };
+    //options["body"] = JSON.stringify(data);
+    request(options, function (err, resp, body){
+        callback(body);
+    });
+ };
+ 
  var updateSongs = function(catId,songs){
      var tmpSubSongs = songs.splice(0,200);
      if(tmpSubSongs.length && tmpSubSongs.length > 0){
@@ -45,6 +59,10 @@
          });
      }
      else{
+         
+         pullCatalog2Gen(catId,function(_res){
+             console.log(_res);
+         });
          return ;
      }
  };

@@ -19,6 +19,16 @@ electron-packager ../WutzPlayer --platform=linux --arch=all --overwrite --ignore
 
 electron-packager ../WutzPlayer --platform=darwin --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)"
 
+electron-packager ./WutzPlayer --platform=linux --arch=all --overwrite --ignore '(.gitignore|nbproject|utils.txt)' --icon '../dist/icon.ico' --out '../dist'
+
+electron-installer-windows --src ./Wutz-Player-win32-x64/ --dest ./Output/
+
+
+uglifyjs [""]
+
+
+electron-packager . WutzPlayer --platform=win32 --arch=all --overwrite --ignore "(.gitignore|nbproject|utils.txt)" --icon "../dist/icon.ico" --out "../dist"
+
 
 rimraf node_modules
 
@@ -30,3 +40,34 @@ remove obsolete courses
 import global wddi instead just Netherland 
 
 npm uninstall electron-spawn --save
+
+
+--------------------------------------------------------
+
+makecert -r -pe -ss WutzPlayerStore -n "CN=WutzPlayerCert" WutzPlayerCert.cer 
+
+makecert -r -pe -ss WutzPlayerStore -n "CN=WutzPlayerCert2" -b 12/05/2016 /p Jaururo2009 WutzPlayerCert2.cer
+
+-----------------------------------------------------------------------------------------------------------
+makecert -sv wutz_private_key.pvk -n "CN=WutzPlayerCert" WutzPlayerCertWin.cer -b 01/01/2016 -e 01/01/2026 -r
+pvk2pfx -pvk wutz_private_key.pvk -spc WutzPlayerCertWin.cer -pfx WutzPlayerCertWinSignKey.pfx -po Jaururo2009
+---------
+SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./WutzPlayer-win32-ia32/WutzPlayer.exe
+SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./WutzPlayer-win32-x64/WutzPlayer.exe
+
+
+SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win32-1.0.5.exe
+SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win64-1.0.5.exe
+-----------------------------------------------------------------------------------------------------------
+
+SignTool sign /WutzWinCert.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll ./Wutz-Player-win32-ia32/Wutz-Player.exe
+
+SignTool sign /debug /f WutzWinCert.pfx /p Jaururo2009  /t http://timestamp.verisign.com/scripts/timstamp.dll ./Wutz-Player-win32-x64/Wutz-Player.exe
+
+signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Wutz-Player-win32-ia32/Wutz-Player.exe
+
+signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Wutz-Player-win32-x64/Wutz-Player.exe 
+
+signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Output/wutz-player-win32-1.0.4.exe
+
+signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Output/wutz-player-win64-1.0.4.exe

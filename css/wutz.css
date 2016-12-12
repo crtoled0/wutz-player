@@ -105,9 +105,13 @@ table {
 }
 
 .bordered tr{
-    color: #00FF00;
+    color: #FFFFFF;
+    background: rgba(0,0,0,.6);
 }
 
+.bordered tr:first-child{
+    background: #000000;
+}
 /*----------------------*/
 
 .zebra td, .zebra th {
@@ -179,7 +183,8 @@ table {
 
 .playingRow
 {
-   background: #000000;
+   background: #000000 !important;
+   color: #00FF00 !important;
 }
 .playingRow td:first-child
 {

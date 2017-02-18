@@ -85,8 +85,13 @@ this.loadAndPlaySong = function(song){
         if(song.media_type === "video" && song.extension !== "tube")
             $("#"+song.songid).addClass("fullscreenvideo");
         if(song.extension !== "tube"){
-            $("#"+song.songid).get(0).play();        
-            mainMod.songChecker($("#"+song.songid).get(0));
+                $("#"+song.songid).get(0).addEventListener("error", function (err) {
+                    //alert("Algo Falló");
+                    logger.info("ERROR LOADING SONG PATH: ["+song.songid+"]");
+                    mainMod.goNextQueue();
+                }, true);
+                $("#"+song.songid).get(0).play();
+                mainMod.songChecker($("#"+song.songid).get(0));
         }
         else{
             this.playYTSong(song.songid);
@@ -346,29 +351,12 @@ this.loadFullCatalogReturn = function(jsonRes){
         
     };
     
-    /**
-    this.setFullScreen = function(){
-       modul = this;
-       console.log("Setting Full Screen");
-      // var element = document.getElementById("mainContainer");
-       var element = document.body;
-          if (element.requestFullscreen)
-              element.requestFullscreen();
-          else if (element.msRequestFullscreen)
-              element.msRequestFullscreen();
-          else if (element.mozRequestFullScreen)
-              element.mozRequestFullScreen();
-          else if (element.webkitRequestFullscreen)
-              element.webkitRequestFullscreen();
-          
-          element.style.display='none';
-          element.offsetHeight; // no need to store this anywhere, the reference is enough
-          element.style.display='';
-         // element.style.webkitTransform = 'scale(1)';
-         // modul.refreshCssFiles();
-          
-     };
-     **/
+    this.forwardSong = function(){
+        var mod = this;
+        mod.goNextQueue();
+        var menuObj = $("#headerMenu");
+        menuObj.animate({width:"0px"},1000);
+    };
     
      this.setFullScreen = function(){
         

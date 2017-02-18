@@ -84,7 +84,7 @@ var sendCat2WutzCloud = function(callback){
     var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
     var catalog = JSON.parse(fs.readFileSync(homePath+"/json/catalog.json"));
     var songs = catalog.songs;
-    console.log("Total Songs ["+songs.length+"]");
+    logger.info("Total Songs ["+songs.length+"]");
     var smallArr = songs.splice(0,200);
     catalog.songs = smallArr;
     
@@ -128,7 +128,7 @@ var updateCatalog = function(catId, data, callback){
      if(tmpSubSongs.length && tmpSubSongs.length > 0){
          var temCat = {bar_id:barId,songs:tmpSubSongs};
          updateCatalog(catId, temCat, function(_res){
-                console.log("Songs Left "+songs.length);
+                logger.info("Songs Left "+songs.length);
                 updateSongs(barId,catId,songs,callback);
          });
      }

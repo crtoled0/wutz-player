@@ -32,7 +32,7 @@ var confTemplate = {"bar_id":"",
                     "catid":"",
                     "musicPath":"",
                     "separator":sep,
-                    "serverhost":"http://wutznet.com",
+                    "serverhost":"http://wutz.co.uk",
                     "localProwser":"/bwclient/index.html",
                     "androidAppURL":"/apps/Wutz.apk",
                     "downloadAppURL":"https://build.phonegap.com/apps/2149695",
@@ -51,7 +51,7 @@ var confTemplate = {"bar_id":"",
     
 var login = function(authAcc,callback) {  
   
-  logger.info("Going to login "+JSON.stringify( authAcc ));
+ // logger.info("Going to login "+JSON.stringify( authAcc ));
   
   window.AjaxWAdmin.callService("login",authAcc,"POST",function(result){
       console.log("I'm back from new Lib["+result.logged+"]");

@@ -1,27 +1,28 @@
 function AppViewModel() {
-    
-   //Observable Definitions 
+
+   //Observable Definitions
     mainMod = this;
-    mainMod.playList = ko.observableArray([]); 
+    mainMod.playList = ko.observableArray([]);
     mainMod.filePlaying = ko.observable();
     mainMod.fullScr = ko.observable({"imgSrc":"img/plus-white.png","text":"Full Screen"});
-    
-    
+
+
     //mainMod.picMap = ko.observable({"others":"./img/fronts/defaultSong.png"});
-    
+
 //Start checking audio
 var config = null;
 var homePath = window.sessionStorage.getItem("homePath");
 var logger = require('./js/lib/log4Wutz');
 var ipc = require('electron').ipcRenderer;
+var sesTkn = window.sessionStorage.getItem("wutzSessToken");
 
 var brokenSongs = [];
 var ytMap = {};
 
 $(document).ready(function() {
-    
+
     $.getJSON( homePath+"/json/config.json", function(_config) {
-        
+
        // var qrUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+_config.downloadAppURL+"&v="+Math.random();
        // $("#qrAppImg").attr("src",qrUrl);
         config = _config;
@@ -29,58 +30,59 @@ $(document).ready(function() {
         params.catId = config.catid;
         params.token = config.dayToken;
         params = JSON.stringify(params);
-        
+
         $.ajax({
-		type: 'POST',
-		dataType: 'json',
+            		type: 'POST',
+            		dataType: 'json',
                 url: config.serverhost+"/rescuePendingList",
-		data: params,
-		success: function (result) {
-			mainMod.loadFullCatalog();
-                        mainMod.checkEmptyList();
-                        var inter = setInterval(function(){
-                          mainMod.loadFullCatalog();
-                        }, 10000 );
-		},
-		error: function (xhr, txtStat, errThrown) {
-			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
-		}
+                headers: { 'Authorization': sesTkn },
+            		data: params,
+            		success: function (result) {
+            			     mainMod.loadFullCatalog();
+                      mainMod.checkEmptyList();
+                      var inter = setInterval(function(){
+                                mainMod.loadFullCatalog();
+                      }, 10000 );
+            		},
+            		error: function (xhr, txtStat, errThrown) {
+            			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
+            		}
        });
     });
 });
 
-     
+
 // -------------   Functions from previous ver
 this.loadAndPlayRandomSong = function(){
-    
+
       var params = {};
         params.catId = config.catid;
         params.token = config.dayToken;
         params.songId = "-1";
         params.guid = config.guid;
         params = JSON.stringify(params);
-        
+
        $.ajax({
-		type: 'POST',
-		dataType: 'json',
-		url: config.serverhost+"/addSongToQueue",
-		data: params,
-		success: function (result) {
-			if(result.added !== "OK")
-                        {
-                            logger.info("Falla al cargar tema random");
-                        }
-		},
-		error: function (xhr, txtStat, errThrown) {
-			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
-		}
+            		type: 'POST',
+            		dataType: 'json',
+            		url: config.serverhost+"/addSongToQueue",
+                headers: { 'Authorization': sesTkn },
+            		data: params,
+            		success: function (result) {
+            			if(result.added !== "OK"){
+                          logger.info("Falla al cargar tema random");
+                  }
+            		},
+            		error: function (xhr, txtStat, errThrown) {
+            			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
+            		}
       });
 };
 
 this.loadAndPlaySong = function(song){
-   
+
     try{
-      
+
       if($.inArray(song.songid,brokenSongs) === -1){
         if(song.media_type === "video" && song.extension !== "tube")
             $("#"+song.songid).addClass("fullscreenvideo");
@@ -110,14 +112,14 @@ this.loadAndPlaySong = function(song){
 
 /**
 this.loadAndPlaySongReturn = function(result){
-    
+
     $("#"+result.songid).get(0).play();
     mainMod.songChecker($("#"+result.songid).get(0));
 };
 **/
 
 this.songChecker = function(audioMedia){
-   
+
    var inter = setInterval(function()
     {
         if(audioMedia.ended)
@@ -133,13 +135,13 @@ this.songChecker = function(audioMedia){
                 mainMod.checkEmptyList();
                 mainMod.loadAndPlayRandomSong();
             }
-                
+
         }
     }, 1000 );
 };
 
 this.youtubeEndSong = function(){
-   
+
             logger.info("Youtube Song Ended");
             //$("#"+mainMod.playList()[0].songid).removeClass("fullscreenvideo");
             if(mainMod.playList().length > 0)
@@ -151,7 +153,7 @@ this.youtubeEndSong = function(){
 };
 
 this.goNextQueue = function(){
-    
+
     //comingfromArrow = comingfromArrow?true:false;
    //if($("#playList").children().size() > 1)
    if(mainMod.playList().length > 1) {
@@ -182,24 +184,25 @@ this.removeSongFromPlaylist= function(songid,clientGuid){
         params.guid = clientGuid;
         params = JSON.stringify(params);
     $.ajax({
-		type: 'POST',
-		dataType: 'json',
-		url: config.serverhost+"/unqueueSong",
-		data: params,
-		success: function (result) {
-                       if(result)
-                            logger.info("LastSongRem");
-                       else
-                           logger.info("NoSongRemoved");
-		},
-		error: function (xhr, txtStat, errThrown) {
-			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
-		}
+          		type: 'POST',
+          		dataType: 'json',
+          		url: config.serverhost+"/unqueueSong",
+              headers: { 'Authorization': sesTkn },
+          		data: params,
+          		success: function (result) {
+                 if(result)
+                     logger.info("LastSongRem");
+                 else
+                     logger.info("NoSongRemoved");
+          		},
+          		error: function (xhr, txtStat, errThrown) {
+          			logger.info(xhr.status+':::'+txtStat+':::'+errThrown);
+          		}
       });
 };
 
 this.startQueue = function(){
-    
+
       //var songId = $("#playList tr:first #songId").attr("value");
       //var songId = mainMod.playList()[0].songid;
       $("#playList tr:first").addClass("playingRow");
@@ -207,32 +210,33 @@ this.startQueue = function(){
 };
 
 this.loadFullCatalog = function(){
-    
+
     var params = {};
         params.catId = config.catid;
         params.token = config.dayToken;
         params = JSON.stringify(params);
-        
+
       $.ajax({
-		type: 'POST',
-		dataType: 'json',
-		url: config.serverhost+"/getFullCatalog",
-		data: params,
-		success: function (result) {
-			mainMod.loadFullCatalogReturn(result);
-		},
-		error: function (xhr, txtStat, errThrown) {
-			console.log(xhr.status+':::'+txtStat+':::'+errThrown);
-		}
+          		type: 'POST',
+          		dataType: 'json',
+          		url: config.serverhost+"/getFullCatalog",
+              headers: { 'Authorization': sesTkn },
+          		data: params,
+          		success: function (result) {
+          			mainMod.loadFullCatalogReturn(result);
+          		},
+          		error: function (xhr, txtStat, errThrown) {
+          			console.log(xhr.status+':::'+txtStat+':::'+errThrown);
+          		}
       });
 };
 
 this.loadFullCatalogReturn = function(jsonRes){
-    
+
     //var firstOne = true;
     var mp3t = require('./js/lib/mp3Tools');
     //var mainMod = this;
-    
+
     var areNewSongs = false;
     $.each(jsonRes,function(i, value)
     {
@@ -240,11 +244,11 @@ this.loadFullCatalogReturn = function(jsonRes){
          tempSong = value;
        //  tempSong.pic = "";
         // mainMod.picMap()[tempSong.songid] = "./img/fronts/defaultSong.png";
-        // var fileName = "./audio/currSong.mp3?rv"+Math.random(); 
+        // var fileName = "./audio/currSong.mp3?rv"+Math.random();
         var filPath = tempSong.file_path;
-        var filName = tempSong.file_name;  
+        var filName = tempSong.file_name;
         var fileName = filPath+"/"+filName;
-        
+
         var audioHtml = "";
         if(tempSong.media_type === "audio"){
              audioHtml = "<audio class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"none\"> ";
@@ -257,7 +261,7 @@ this.loadFullCatalogReturn = function(jsonRes){
             audioHtml += "</video>";
          }
          else if(tempSong.extension === "tube"){
-              audioHtml = "<img src=\"./img/youtubeSmall.png\" width=\"40px\" />"; 
+              audioHtml = "<img src=\"./img/youtubeSmall.png\" width=\"40px\" />";
          }
          tempSong.htmlAudioObject = audioHtml;
          mainMod.playList.push(tempSong);
@@ -283,7 +287,7 @@ this.loadFullCatalogReturn = function(jsonRes){
                       //  _player.playVideo();
                         //mainMod.findAndAddYTPlayer(songId, player);
                         //tempSong["ytPlayer"] = player;
-                        
+
                     },
                     function(){
                        // mainMod.youtubeEndSong();
@@ -305,7 +309,7 @@ this.loadFullCatalogReturn = function(jsonRes){
       mainMod = this;
       var vidCont = $("<div id=\"ytVideoCont\" class=\"fullscreenvideo\"></div>");
       $("body").append(vidCont);
-      
+
       YTPlay.loadNewVideo({"videoId":ytMap[songId],"objectId":"ytVideoCont"},
              function(_player){
                        _player.playVideo();
@@ -331,7 +335,7 @@ this.loadFullCatalogReturn = function(jsonRes){
 
 
     this.toogleHeaderMenu = function(data, event){
-        
+
         console.log("Mouse ["+event.pageX+"]["+event.pageY+"]");
         var menuObj = $("#headerMenu");
         if(menuObj.css("width") === "0px"){
@@ -344,45 +348,45 @@ this.loadFullCatalogReturn = function(jsonRes){
             //menuObj.fadeOut("slow");
         }
     };
-    
+
     this.exitPlayer = function(){
-        
+
         document.location = "./login_reg.html";
-        
+
     };
-    
+
     this.forwardSong = function(){
         var mod = this;
         mod.goNextQueue();
         var menuObj = $("#headerMenu");
         menuObj.animate({width:"0px"},1000);
     };
-    
+
      this.setFullScreen = function(){
-        
+
         var mod = this;
         var menuObj = $("#headerMenu");
         menuObj.animate({width:"0px"},1000);
         ipc.sendSync('toogFullScreen');
-        
+
         if(mod.fullScr().text === "Full Screen"){
             mod.fullScr({"imgSrc":"img/minus-white.png","text":"Exit Full Screen"});
         }
         else{
             mod.fullScr({"imgSrc":"img/plus-white.png","text":"Full Screen"});
         }
-        
+
           $(document).keyup(function(e) {
             if (e.keyCode == 27) { // escape key maps to keycode `27`
                 mod.setFullScreen();
             }
            });
-        
+
      };
-    
-    
+
+
     this.refreshCssFiles = function(){
-        
+
         var linkTemplate = "<link rel=\"stylesheet\" type=\"text/css\" />";
         $("link", "head").each(function(i){
             var tempCssLink = $(this).attr("href");

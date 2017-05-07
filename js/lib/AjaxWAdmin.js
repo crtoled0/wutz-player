@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2016 CRTOLEDO.
  *
  * This library is free software; you can redistribute it and/or
@@ -20,23 +20,28 @@
 
 ;(function(window, document, undefined){
 	"use strict";
-	
+
 	/**
 	 * The actual constructor of the Global object
 	 */
 	var WutzAdminConnImpl = {
 	    _version : 0.1,
 	    _config : {
-		wutzAdminHost : 'http://wutznet.com'
+		   wutzAdminHost : 'http://wutz.co.uk'
+		  // wutzAdminHost : 'http://localhost:8001/WutzAdmin'
 	    },
-            callService : function(service,params,method,callback){
-                
+            callService : function(service,params,method,authToken,callback){
+								if(typeof authToken === "function"){
+								  	callback = authToken;
+										authToken = "";
+								}
                 var mySelf = this;
                 params = JSON.stringify(params);
                 $.ajax({
                         type: method,
                         dataType: 'json',
                         url: mySelf._config.wutzAdminHost+"/"+service,
+												headers: { 'Authorization': authToken },
                         data: params,
                         success: function (result) {
                                 callback(result);
@@ -51,7 +56,7 @@
                });
             }
 	};
-	
+
 	var AjaxWAdmin = function(){};
 	AjaxWAdmin.prototype = WutzAdminConnImpl;
 	AjaxWAdmin = new AjaxWAdmin();

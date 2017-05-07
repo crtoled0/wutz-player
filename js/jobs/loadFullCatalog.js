@@ -91,7 +91,7 @@ var walkIMG = function(dir, done) {
 String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
 };
-//console.log("LOADING CATALOG ...");
+console.log("LOADING CATALOG PROCESS HERE TOO...");
  var homePath = os.homedir()+"/.wutz";
 var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
   var musPath = config.musicPath;
@@ -104,7 +104,9 @@ var config = JSON.parse(fs.readFileSync(homePath+"/json/config.json"));
   var glbExtOnFinish = null;
 
 var initLoading = function(onLoading, onFinish){
-    
+   
+   console.log("LOADING FILES PROCESS"); 
+
    glbExtOnLoading = onLoading;
    glbExtOnFinish = onFinish;
 
@@ -188,7 +190,7 @@ var getArrayMd3 = function(index, total){
               var res = tags["tags"];
             //  logger.info("How it looks null ? : album " + res.album);
               console.log(res);
-               var perc = Math.round((index/total)*100)+"%";
+               var perc = Math.round((index/total)*100);
                        // console.log("["+Math.round((index/total)*100)+"%] Loaded");
                         songList[index].songName = res.title?res.title.replace("  "," "):songList[index].songFileName;
                         var id3Artist = songList[index].songArtist;//res.artist?res.artist.replace("  "," "):songList[index].songArtist; 

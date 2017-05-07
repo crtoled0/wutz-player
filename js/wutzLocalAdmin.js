@@ -5,7 +5,6 @@
     var config = null;
     var bAdm = require('./js/lib/barAdmin');
     var catAdm = require("./js/lib/catalogTools");
-
     var logger = require('./js/lib/log4Wutz');
 	// Options for Message
 	//----------------------------------------------
@@ -399,6 +398,8 @@
   function runCatalogLoad(){
     catAdm.getCatalogFromFileSystem();
   }
+
+
   
   $("#refreshCurrCat").click(function(){
       catAdm.sendCat2WutzCloud(function(_config){
@@ -525,4 +526,10 @@ var sectionMapping = {
       
       sectionMapping.loaded = section;
       
+  }
+
+  function loadModalPage(modPage){
+     console.log("To load modal " +modPage);
+    // $(".modal").modal("hide");
+     $("#"+modPage).appendTo("body").modal("show");
   }

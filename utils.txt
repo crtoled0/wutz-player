@@ -37,14 +37,14 @@ git remote add origin file:///C:\Users\CRTOLEDO\Google Drive\reps\wutzPlayer
 
 remove obsolete courses
 
-import global wddi instead just Netherland 
+import global wddi instead just Netherland
 
 npm uninstall electron-spawn --save
 
 
 --------------------------------------------------------
 
-makecert -r -pe -ss WutzPlayerStore -n "CN=WutzPlayerCert" WutzPlayerCert.cer 
+makecert -r -pe -ss WutzPlayerStore -n "CN=WutzPlayerCert" WutzPlayerCert.cer
 
 makecert -r -pe -ss WutzPlayerStore -n "CN=WutzPlayerCert2" -b 12/05/2016 /p Jaururo2009 WutzPlayerCert2.cer
 
@@ -56,18 +56,6 @@ SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp
 SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./WutzPlayer-win32-x64/WutzPlayer.exe
 
 
-SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win32-1.0.6.exe
-SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win64-1.0.6.exe
+SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win32.exe
+SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win64.exe
 -----------------------------------------------------------------------------------------------------------
-
-SignTool sign /WutzWinCert.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll ./Wutz-Player-win32-ia32/Wutz-Player.exe
-
-SignTool sign /debug /f WutzWinCert.pfx /p Jaururo2009  /t http://timestamp.verisign.com/scripts/timstamp.dll ./Wutz-Player-win32-x64/Wutz-Player.exe
-
-signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Wutz-Player-win32-ia32/Wutz-Player.exe
-
-signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Wutz-Player-win32-x64/Wutz-Player.exe 
-
-signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Output/wutz-player-win32-1.0.4.exe
-
-signtool sign /s WutzPlayerStore /n WutzPlayerCert ./Output/wutz-player-win64-1.0.4.exe

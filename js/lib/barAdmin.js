@@ -1,4 +1,4 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -15,6 +15,7 @@ window.sessionStorage.setItem("homePath",wutzEdidFsPath);
 var configPath = wutzEdidFsPath+sep+"json/config.json";
 var catalogPath = wutzEdidFsPath+sep+"json/catalog.json";
 
+var conf;
 
 
 var serverConfMapp = {"desc": "desc",
@@ -27,16 +28,17 @@ var serverConfMapp = {"desc": "desc",
                       "representante": "representante",
                       "songsAllowed": "songsAllowed",
                       "telefono": "telefono"};
-                  
+
 var confTemplate = {"bar_id":"",
                     "catid":"",
                     "musicPath":"",
                     "separator":sep,
                     "serverhost":"http://wutz.co.uk",
+                //    "serverhost":"http://localhost:8001/WutzAdmin", // TEMP
                     "localProwser":"/bwclient/index.html",
                     "androidAppURL":"/apps/Wutz.apk",
                     "downloadAppURL":"https://build.phonegap.com/apps/2149695",
-                    "songsAllowed":4,
+                    "songsAllowed":-1,
                     "guid":"",
                     "superClient":[],
                     "nombreBar":"",
@@ -45,35 +47,32 @@ var confTemplate = {"bar_id":"",
                     "email":"",
                     "latitude":"",
                     "longitute":"",
-                    "dayToken":"123123",
+                    "dayToken":"",
                     "desc":""};
     //var config = JSON.parse(fs.readFileSync("json/config.json"));
-    
-var login = function(authAcc,callback) {  
-  
- // logger.info("Going to login "+JSON.stringify( authAcc ));
-  
-  window.AjaxWAdmin.callService("login",authAcc,"POST",function(result){
-      console.log("I'm back from new Lib["+result.logged+"]");
+
+var login = function(authAcc,callback) {
+window.AjaxWAdmin.callService("login",authAcc,"POST",function(result){
+      //console.log("I'm back from new Lib["+result.logged+"]");
       callback(result);
   });
 };
 
 
 var register = function(regData,callback) {
-  
+
   window.AjaxWAdmin.callService("registerBar",regData,"POST",function(result){
   //app2WutzAdm.goPost("registerBar",regData, function(result){
-      console.log("I'm back ["+result+"]");
+      //console.log("I'm back ["+result+"]");
       callback(result);
   });
 };
 
-var saveConf = function(conf,callback) {
-  
-  window.AjaxWAdmin.callService("uploadLocalServerInfo",conf,"POST",function(result){
+var commitBarChanges = function(callback) {
+  var sesTkn = window.sessionStorage.getItem("wutzSessToken");
+   window.AjaxWAdmin.callService("uploadLocalServerInfo",conf,"POST", sesTkn,function(result){
  //   app2WutzAdm.goPost("uploadLocalServerInfo",conf, function(result){
-      console.log("I'm back ["+result+"]");
+    //  console.log("I'm back ["+result+"]");
       callback(result);
   });
 };
@@ -84,76 +83,42 @@ var saveConfigFile = function(conf,callback) {
                     if (err) {
                       logger.info(err);
                       return
-                    } 
-                    logger.info("Config Edited");
+                    }
+                   // logger.info("Config Edited");
                     callback(conf);
            });
 };
 
 
-var loadNeededFiles = function(callback){
-    
-    console.log("Loading Conf File");
-    var config = null; 
-    var existCat = true;
-    var currBar  = window.sessionStorage.getItem("currBar");
-   // var loggedIn  = window.sessionStorage.getItem("logged");
-    if (fs.existsSync(configPath)) {
-           
-           config =  JSON.parse(fs.readFileSync(configPath));
-           
-           if(config.catid === "")
-               existCat = false;
-           if(currBar === config.bar_id){
-                callback(config,existCat);
-                return;
-           }
-           else{
-               loadBarFromWutzServer(currBar, function(config){
-                   if(config.catid === ""){
-                        existCat = false; 
-                        callback(config,existCat);
-                        return;
-                   }
-               });
-           }
-               
-    }
-    else{
-         loadBarFromWutzServer(currBar, function(config){
-                   if(config.catid === ""){
-                        existCat = false; 
-                        callback(config,existCat);
-                        return;
-                   }
-          });
-    }
-};
-
-
-var loadBarFromWutzServer = function(currBar, callback){
-  logger.info("Getting Bar Info..");
-  
-  window.AjaxWAdmin.callService("getBar/"+currBar,null,"GET",function(result){
-  //app2WutzAdm.goGet("getBar/"+currBar,function(result){
-      logger.info(result);
-          
-          var newGuid = generateUUID();
-          var newConf = confTemplate;
-          newConf.guid = newGuid;
-          newConf.superClient.push(newConf.guid);
-          
-          for(var key in serverConfMapp){
-              var confAtt = serverConfMapp[key];
-              newConf[confAtt] = result[key];
-                //logger.info(attributename+": "+myobject[attributename]);
-          }
-          
-          saveConfigFile(newConf,function(setCfig){
-              callback(setCfig);
-          });
+var updateConfig = function(pageBar,callback){
+  var genTool = require("./genericTools");
+  genTool.mergeMappedJSONObjects(pageBar,confTemplate,serverConfMapp,function(_config){
+      //  console.log(_config);
+        if(_config.guid === ""){
+            _config.guid = generateUUID();
+            _config.superClient = [_config.guid];
+        }
+        saveConfigFile(_config, function(_savedConfig){
+              if(_savedConfig){
+                    conf = _savedConfig;
+                    callback(true);
+              }
+              else
+                    callback(false);
+        });
   });
 };
+
+
+var isThereCatalogFileLoaded = function(callback){
+  //  console.log("Bar Admin Right here");
+    if (fs.existsSync(catalogPath)) {
+        callback(true);
+    }
+    else
+      callback(false);
+};
+
 
 var generateUUID = function(){
     var d = new Date().getTime();
@@ -170,8 +135,9 @@ var generateUUID = function(){
 
 module.exports = {
   saveConfigFile: saveConfigFile,
-  loadNeededFiles: loadNeededFiles,
-  saveConf: saveConf,
-  register: register, 
-  login : login
+  updateConfig: updateConfig,
+  commitBarChanges: commitBarChanges,
+  register: register,
+  login : login,
+  isThereCatalogFileLoaded: isThereCatalogFileLoaded
 };

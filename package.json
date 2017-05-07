@@ -1,6 +1,6 @@
 {
   "name": "WutzPlayer",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Player for Wutz",
   "main": "main.js",
   "dependencies": {
@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "electron-installer-windows": "^0.2.0",
+    "electron-packager": "^8.7.0",
     "electron-prebuilt": "^0.35.6",
     "uglify-js": "^2.7.5"
   },
@@ -19,6 +20,6 @@
     "build": "node build.js",
     "createWinInstaller": "node installer.js"
   },
-  "author": "http://wutznet.com",
+  "author": "http://wutz.co.uk",
   "license": "ISC"
 }

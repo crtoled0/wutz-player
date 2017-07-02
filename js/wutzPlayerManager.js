@@ -256,7 +256,7 @@ this.loadFullCatalogReturn = function(jsonRes){
              audioHtml += "</audio>";
          }
          else if(tempSong.media_type === "video" && tempSong.extension !== "tube"){
-            audioHtml = "<video width=\"204\" height=\"40\" class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"none\"> ";
+            audioHtml = "<video width=\"204\" height=\"40\" class=\"audio\" id=\""+tempSong.songid+"\" controls preload=\"metadata\"> ";
             audioHtml += "<source src=\""+fileName+"\" type=\"video/webm\">";
             audioHtml += "</video>";
          }

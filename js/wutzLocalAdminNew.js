@@ -133,7 +133,8 @@ function AppViewModel() {
                 size: "mini"
             });
           }
-          $('#loadingPageModal').modal("hide");
+          //$('#loadingPageModal').modal("hide");
+          $("#loadingDiv").hide();
       });
 
     };

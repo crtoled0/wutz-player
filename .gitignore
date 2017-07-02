@@ -7,3 +7,6 @@
 /Wutz-Player-win32-x64/
 node_modules/
 /installer.js
+/build.js
+/release
+/build/WutzPlayerCertWinSignKey.pfx

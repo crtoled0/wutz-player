@@ -59,3 +59,6 @@ SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp
 SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win32.exe
 SignTool sign /f WutzPlayerCertWinSignKey.pfx /p Jaururo2009 /t http://timestamp.verisign.com/scripts/timstamp.dll ./Output/wutz-player-win64.exe
 -----------------------------------------------------------------------------------------------------------
+
+
+yarn dist

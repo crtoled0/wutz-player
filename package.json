@@ -38,15 +38,16 @@
     },
     "linux": {
       "target": ["deb",
-                 "AppImage",
-                 "rpm"],
-      "icon":"build/icon.icns"
+                 "AppImage"],
+	"icon":"build/icons"
     },
     "directories": {
       "buildResources": "build",
       "output": "release"
     }
   },
-  "author": "http://wutz.co.uk",
+  "author": {"name":"Cristian Toledo",
+     	     "email":"crtoledo@wutz.co.uk"
+  },
   "license": "ISC"
 }

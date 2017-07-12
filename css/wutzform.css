@@ -3,6 +3,25 @@ html{
     overflow: hidden;
 }
 
+/* SCROLLBAR */
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgb(0,0,0);
+    border: 4px solid transparent;
+    background-clip: content-box;   // this is important
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(255,255,255);
+    border: 1px solid rgb(0,0,0);
+}
+
 .page{
     z-index: 2;
 }
@@ -120,7 +139,7 @@ button{
 
 #desc{
   width: 100%;
-  height: 255px;
+  height: 100px;
 }
 
 .footerBar{
@@ -146,4 +165,85 @@ button{
   position: absolute;
   left: 40%;
   top: 40%;
+}
+
+#mainMenu{
+  background: rgba(34, 34, 34, .7);
+
+}
+
+
+.mainMenuOption{
+    margin-top: 3px;
+    margin-bottom: 3px;
+    width: 100px;
+    height: 100px;
+}
+
+.mainMenuOption i{
+  font-size: 50px;
+}
+
+.scrollableIndex{
+  height: 400px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.addMargin{
+   margin-top:40px;
+   height: 360px;
+}
+
+.indexPrevSection h4{
+   color: #fff;
+   font-size: 15px;
+   position: fixed;
+   z-index: 1000;
+   background: rgba(34, 34, 34, .7);
+   margin: 4px;
+   padding: 6px;
+   border-radius: 4px;
+}
+.playListRow{
+  overflow-y: hidden;
+  height: 90px;
+}
+.playListRow .col-md-3{
+   text-align: right;
+   padding-right: 0px;
+}
+
+.playListRow .vcenter{
+    background: rgba(255, 255, 255, .7);
+    border-radius: 0px 4px 4px 0px;
+    margin-left: 1px;
+    margin-top: 0%;
+    height: 80px;
+    padding-top: 9px;
+    overflow-y: hidden;
+}
+
+.playListRow img{
+    border-radius: 4px 0px 0px 4px;
+    width: 80px;
+    height: auto;
+}
+
+.vcenter {
+    display: inline-block;
+    margin-top: 5%;
+    float: none;
+}
+
+.row .artNameLabel{
+  position: absolute;
+  bottom: 0px;
+  border-radius: 0px 6px 0px 0px;
+  background: rgba(217,83,79, .7);
+  padding-right: 6px;
+  padding-top: 2px;
+  padding-left: 4px;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
 }

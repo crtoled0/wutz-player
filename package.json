@@ -1,6 +1,6 @@
 {
   "name": "WutzPlayer",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Player for Wutz",
   "main": "main.js",
   "dependencies": {
@@ -30,8 +30,8 @@
         "category":"public.app-category.entertainment",
         "target":["dmg"],
         "icon" : "build/icon.icns",
-	"type": "distribution",
-	"identity":"Cristian Toledo hevia"
+      	"type": "distribution",
+      	"identity":"Cristian Toledo hevia"
     },
     "win": {
       "target": [{"target":"nsis","arch":"x64"},

@@ -44,21 +44,6 @@ MA 02110-1301  USA
 
 
 <div id="loadingDiv"><i class="fa fa-spinner fa-spin" style="font-size:84px"></i></div>
-<!-- Loading MODAL -->
-<!-- div id="loadingPageModal" class="modal fade" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-md-10">
-                <img src="./img/ajax-loader.gif" />
-              </div>
-            </div>
-          </div>
-      </div>
- </div --><!-- /.modal -->
-<!--  /Loading MODAL -->
-
-
 <!-- GENERIC PROGRESS BAR -->
 <div id="genericProgressBarMod" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -206,7 +191,9 @@ MA 02110-1301  USA
               </div>
 		      </div>
 		      <div class="modal-footer">
+            <!-- ko if: !isJustRegister() -->
             <button type="button" class="btn btn-default" data-dismiss="modal" style="float:left">Cancelar</button>
+            <!-- /ko -->
             <!-- ko if: browseCat().selectedArtist.name !== '' -->
             <button type="button" class="btn btn-danger" style="float:left" data-bind="click:function(){deleteSelectedArtist();}">Borrar Artista</button>
             <!-- /ko -->
@@ -361,7 +348,7 @@ MA 02110-1301  USA
                     <div class="row">
                       <div class="col-md-10">
                           <div class="form-group">
-                              <label for="id" class="col-sm-4 control-label">Id Bar / Email</label>
+                              <label for="id" class="col-sm-4 control-label">Id Bar</label>
                               <div class="col-sm-8">
                                         <input type="input" class="form-control input-sm" id="idOrMail" placeholder="">
                               </div>
@@ -377,8 +364,8 @@ MA 02110-1301  USA
                 </form>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-default">Registrarse</button>
-              <button type="button" class="btn btn-default">Cambiar Password</button>
+              <button type="button" class="btn btn-default" data-bind="click:function(){$('#registerBarModal').modal();}">Registrarse</button>
+              <button type="button" class="btn btn-default" data-bind="click:function(){reqRecPassword();}">Olvidé el Password</button>
               <button type="button" class="btn btn-primary" data-bind="click:function(){login();}">Login</button>
           </div>
         </div><!-- /.modal-content -->
@@ -440,7 +427,9 @@ MA 02110-1301  USA
                 </form>
           </div>
           <div class="modal-footer">
+            <!-- ko if: !isJustRegister() -->
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <!-- /ko -->
             <!-- ko if: !newFSCatLoaded() -->
             <button type="button" class="btn btn-primary" data-bind="click:function(){loadNewCatalogFromFS();}">Cargar</button>
             <!-- /ko -->
@@ -480,16 +469,198 @@ MA 02110-1301  USA
                   <!-- /div -->
           </div>
           <div class="modal-footer">
+            <!-- ko if: !isJustRegister() -->
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Guardar</button>
+            <!-- /ko -->
+            <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click:function(){if(isJustRegister()){$('#loadCatalogModal').modal();}},html:isJustRegister()?'Siguiente':'Guardar'">-</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
  </div><!-- /.modal -->
 <!-- /LOCATION MODAL -->
 
+<!-- EDIT BAR MODAL -->
+<div id="editBarModal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Editar </h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+            <div class="row">
+                <div class="col-md-11">
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="nombreBar" class="sr-only">Nombre </label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                  <span class="input-group-addon">Nombre</span>
+                                  <input type="input" class="form-control" id="nombreBar" placeholder="" />
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="songsAllowed" class="sr-only">Canciones Permitidas </label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Canciones Permitidas</span>
+                                        <input type="number" class="form-control input-sm" id="songsAllowed" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="dayToken" class="sr-only">Token del Día </label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Token del día</span>
+                                        <input type="input" class="form-control input-sm" id="dayToken" placeholder="Ex. 123123">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="representante" class="sr-only">Representante</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Representante</span>
+                                        <input type="input" class="form-control input-sm" id="representante" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="telefono" class="sr-only">Telefono</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Telefono</span>
+                                        <input type="input" class="form-control input-sm" id="telefono" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="email" class="sr-only">Email</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Email</span>
+                                        <input type="input" class="form-control input-sm" id="email" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="col-sm-12">
+                                     <textarea rows="5" class="form-control input-sm" id="desc" placeholder="Danos uns descripción de tu bar o evento."></textarea>
+                              </div>
+                          </div>
+               </div>
+             </div>
+           </form>
+          </div>
+          <div class="modal-footer">
+            <!-- ko if: !isJustRegister() -->
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <!-- /ko -->
+              <button type="button" class="btn btn-primary" data-bind="click:function(){saveBarInfo();},html:isJustRegister()?'Siguiente':'Guardar'">-</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+ </div><!-- /.modal -->
+<!-- /EDIT BAR MODAL -->
+
+<!-- REGISTER BAR MODAL -->
+<div id="registerBarModal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Registrar </h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+            <div class="row">
+                <div class="col-md-11">
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="barId" class="sr-only">Id </label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                  <span class="input-group-addon">Id</span>
+                                  <input type="text" class="form-control" id="reg_barId" placeholder="moes_bar" />
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="email" class="sr-only">Email</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Email</span>
+                                        <input type="input" class="form-control input-sm" id="reg_email" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="pass" class="sr-only">Password</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Password</span>
+                                        <input type="password" class="form-control input-sm" id="reg_pass" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="pass" class="sr-only">Repetir Password</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Repetir Password</span>
+                                        <input type="password" class="form-control input-sm" id="reg_rep_password" placeholder="">
+                              </div>
+                          </div>
+               </div>
+             </div>
+           </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" data-bind="click:function(){registerBar();}">Registrar</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+ </div><!-- /.modal -->
+<!-- /REGISTER BAR MODAL -->
+
+<!-- RECOVER PASSWORD MODAL -->
+<div id="recoverPassModal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Resetear Password </h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+            <div class="row">
+                <div class="col-md-11">
+                    <p>Un mail ha sido enviado a la casilla de correo configurada para este bar. <br/>
+                       En este mail viene incluido un código de reinicio, el cuál debe ser ingresado junto al nuevo
+                       password para hacer efectivo el cambio de clave.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-11">
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="email" class="sr-only">Código de reinicio</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Código de reinicio</span>
+                                        <input type="input" class="form-control input-sm" id="recp_code" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="pass" class="sr-only">Nuevo Password</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Password</span>
+                                        <input type="password" class="form-control input-sm" id="recp_pass" placeholder="">
+                              </div>
+                          </div>
+                          <div class="form-group" style="margin-left:4px;">
+                              <label for="pass" class="sr-only">Repetir Password</label>
+                              <div class="col-sm-12 input-group" style="float:right;">
+                                        <span class="input-group-addon">Repetir Password</span>
+                                        <input type="password" class="form-control input-sm" id="recp_rep_password" placeholder="">
+                              </div>
+                          </div>
+               </div>
+             </div>
+           </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" data-bind="click:function(){sendRecPassword()}">Resetear Password</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+ </div><!-- /.modal -->
+<!-- /RECOVER PASSWORD MODAL -->
+
 <!-- END OF MODAL SECTIONS AND START PAGE SECTION -->
-<form class="form-horizontal">
 <div class="page container-fluid">
   <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -500,6 +671,7 @@ MA 02110-1301  USA
         <li class="navbar-text">Bar Id : <span class="label label-success" data-bind="html: loadedBar().id"></span></li>
         <li class="navbar-text">Nombre Bar: <span class="label label-success" data-bind="html:loadedBar().nombreBar"></span></li>
         <li class="navbar-text">Catalago Cargado: <span class="label label-success" data-bind="html:loadedBar().idcatalog"></span></li>
+        <li class="navbar-text">Token del día: <span class="label label-success" data-bind="html:loadedBar().dayToken"></span></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
           <li class="navbar-text">
@@ -509,91 +681,75 @@ MA 02110-1301  USA
       </ul>
     </div>
   </nav>
-  <div class="row separatorRow"></div>
-  <div class="row">
-      <div class="col-md-6">
-                <div class="form-group" style="margin-left:4px;">
-                    <label for="nombreBar" class="sr-only">Nombre </label>
-                    <div class="col-sm-12 input-group" style="float:right;">
-                        <span class="input-group-addon">Nombre</span>
-                        <input type="input" class="form-control" id="nombreBar" placeholder="" />
-                	  </div>
+  <!-- div class="row separatorRow"></div -->
+   <!-- div class="row separatorRow"></div -->
+   <div id="mainMenu" class="panel panel-default">
+     <div class="panel-body">
+       <div class="row">
+          <div class="col-md-4">
+            <div class="row">
+               <div class="col-md-12">
+                   <button class="btn btn-success btn-sm mainMenuOption" type="button" data-bind="click: function(){$('#editBarModal').modal();}" title="Editar Bar"><i class="fa fa-edit" aria-hidden="true"></i><br/></button>
+                   <button class="btn btn-success btn-sm mainMenuOption" type="button" data-bind="click: function(){loadLocation();}" title="Ubicación"><i class="fa fa-map-marker" aria-hidden="true"></i><br/></button>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                 <button class="btn btn-success btn-sm mainMenuOption" type="button" data-bind="click: function(){loadCatalog();}" title="Cargar Catalogo"><i class="fa fa-upload" aria-hidden="true"></i><br/></button>
+                 <button id="editCatalogBtn" class="btn btn-success btn-sm mainMenuOption" type="button" data-bind="click: function(){editCatalogM();}" title="Editar Catalogo"><i class="fa fa-tag" aria-hidden="true"></i><br/></button>
+                 <button class="btn btn-success btn-sm mainMenuOption" type="button" data-bind="click: function(){cleanCatPlaylist();}" title="Borrar Lista Actual"><i class="fa fa-refresh" aria-hidden="true"></i><br/></button>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                 <button class="btn btn-danger btn-sm mainMenuOption" type="button" data-bind="click: function(){logOut();}" title="Cambiar de Bar/Log Out"><i class="fa fa-power-off" aria-hidden="true"></i><br/></button>
+                 <button id="goToPlayerBtn" class="btn btn-primary btn-sm mainMenuOption" type="button" data-bind="click: function(){go2Player();}" title="Ir al Reproductor"><i class="fa fa-play-circle" aria-hidden="true"></i><br/></button>
+               </div>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="row" data-bind="if: !indexPreview().isCatalogLoaded && !indexPreview().isPlaylistLoaded">
+                <div class="col-md-12 col-md-offset-3 vcenter">
+                    <h1><img src="./img/icon.png" /></h1>
                 </div>
-                <div class="form-group" style="margin-left:4px;">
-                    <label for="songsAllowed" class="sr-only">Canciones Permitidas </label>
-                    <div class="col-sm-12 input-group" style="float:right;">
-                              <span class="input-group-addon">Canciones Permitidas</span>
-                              <input type="number" class="form-control input-sm" id="songsAllowed" placeholder="">
+            </div>
+            <div class="row indexPrevSection" data-bind="if: indexPreview().isCatalogLoaded || indexPreview().isPlaylistLoaded">
+                <div class="col-md-5">
+                    <h4>Artistas Cargados</h4>
+                    <div class="row scrollableIndex" data-bind="foreach:{data: indexPreview().catalogLoaded ,as: '$art'}">
+                        <div class="col-md-6">
+                          <img data-bind="attr:{'src':$art.lfm_img_url}"  />
+                          <!-- ko if: $art.showName  -->
+                          <span class="artNameLabel" data-bind="html:$art.name"></span>
+                          <!-- /ko -->
+                        </div>
                     </div>
                 </div>
-                <div class="form-group" style="margin-left:4px;">
-                    <label for="dayToken" class="sr-only">Token del Día </label>
-                    <div class="col-sm-12 input-group" style="float:right;">
-                              <span class="input-group-addon">Token del día</span>
-                              <input type="input" class="form-control input-sm" id="dayToken" placeholder="Ex. 123123">
-                    </div>
+                <div class="col-md-7">
+                  <h4>Temas en Cola</h4>
+                  <!-- ko if: indexPreview().playlistLoaded.length === 0 -->
+                  <div class="addMargin">
+                        <span class="label label-danger">No hay temas encolados.</span>
+                  </div>
+                  <!-- /ko -->
+                  <div class="scrollableIndex addMargin" data-bind="foreach:{data: indexPreview().playlistLoaded ,as: '$sng'}">
+                      <div class="row playListRow">
+                        <div class="col-md-3" >
+                          <img data-bind="attr:{'src':$sng.pic}"  />
+                        </div>
+                        <div class="col-md-8 vcenter">
+                              <span data-bind="html:$sng.name"></span><br/>
+                              <span data-bind="html:$sng.artist"></span><br/>
+                        </div>
+                      </div>
+                  </div>
                 </div>
-                <div class="form-group" style="margin-left:4px;">
-                    <label for="representante" class="sr-only">Representante</label>
-                    <div class="col-sm-12 input-group" style="float:right;">
-                              <span class="input-group-addon">Representante</span>
-                              <input type="input" class="form-control input-sm" id="representante" placeholder="">
-                    </div>
-                </div>
-                <div class="form-group" style="margin-left:4px;">
-                    <label for="telefono" class="sr-only">Telefono</label>
-                    <div class="col-sm-12 input-group" style="float:right;">
-                              <span class="input-group-addon">Telefono</span>
-                              <input type="input" class="form-control input-sm" id="telefono" placeholder="">
-                    </div>
-                </div>
-                <div class="form-group" style="margin-left:4px;">
-                    <label for="email" class="sr-only">Email</label>
-                    <div class="col-sm-12 input-group" style="float:right;">
-                              <span class="input-group-addon">Email</span>
-                              <input type="input" class="form-control input-sm" id="email" placeholder="">
-                    </div>
-                </div>
-
+            </div>
+          </div>
+       </div>
      </div>
-     <div class="col-md-4">
-         <div class="form-group">
-             <div class="col-sm-12">
-                    <textarea rows="10" class="form-control input-sm" id="desc" placeholder=""></textarea>
-             </div>
-         </div>
-    </div>
-    <div class="col-md-2">
-            <img src="./img/icon.png">
-    </div>
    </div>
-
-   <div class="row separatorRow"></div>
-   <div class="row separatorRow"></div>
-   <div class="row separatorRow"></div>
-   <div class="row separatorRow"></div>
-   <div class="row separatorRow"></div>
-   <div class="row separatorRow"></div>
-
-   <nav class="navbar navbar-inverse footerBar">
-     <div class="container-fluid">
-       <ul class="nav navbar-nav navbar-left">
-         <li class="navbar-text">
-           <button class="btn btn-primary btn-sm" type="button" data-bind="click: function(){loadCatalog();}">Cargar Catalogo</button>
-           <button id="editCatalogBtn" class="btn btn-primary btn-sm" type="button" data-bind="click: function(){editCatalogM();}">Editar Catalogo</button>
-           <button class="btn btn-primary btn-sm" type="button" data-bind="click: function(){loadLocation();}">Ubicación</button>
-         </li>
-       </ul>
-       <ul class="nav navbar-nav navbar-right">
-         <li class="navbar-text">
-           <button class="btn btn-danger btn-sm" type="button" data-bind="click: function(){logOut();}">Cambiar de Bar/Log Out</button>
-           <button id="goToPlayerBtn" class="btn btn-success btn-sm" type="button" data-bind="click: function(){go2Player();}">Ir al Reproductor</button>
-         </li>
-       </ul>
-     </div>
-   </nav>
 </div>
-</form>
 		<script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>
 		<script id="btLnk" type="text/javascript" src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-toggle.min.js"></script>

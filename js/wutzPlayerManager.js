@@ -5,6 +5,7 @@ function AppViewModel() {
     mainMod.playList = ko.observableArray([]);
     mainMod.filePlaying = ko.observable();
     mainMod.fullScr = ko.observable({"imgSrc":"img/plus-white.png","text":"Full Screen"});
+    mainMod.barInfo = ko.observable({catid: "",dayToken: ""});
 
 
     //mainMod.picMap = ko.observable({"others":"./img/fronts/defaultSong.png"});
@@ -26,6 +27,7 @@ $(document).ready(function() {
        // var qrUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+_config.downloadAppURL+"&v="+Math.random();
        // $("#qrAppImg").attr("src",qrUrl);
         config = _config;
+        mainMod.barInfo({barId: config.bar_id,dayToken: config.dayToken});
         var params = {};
         params.catId = config.catid;
         params.token = config.dayToken;
@@ -205,7 +207,7 @@ this.startQueue = function(){
 
       //var songId = $("#playList tr:first #songId").attr("value");
       //var songId = mainMod.playList()[0].songid;
-      $("#playList tr:first").addClass("playingRow");
+      $("#playList .row:first").addClass("playingRow");
       mainMod.loadAndPlaySong(mainMod.playList()[0]);
 };
 
@@ -301,6 +303,7 @@ this.loadFullCatalogReturn = function(jsonRes){
                 $("#carouselImp").remove();
                 $("body").append(tmp);
                 $("[data-prev-button]").hide();
+                $("[data-next-button]").hide();
                 $(".sliderCol span").textSlider();
     }
 };

@@ -9,6 +9,8 @@
 
     <!-- link rel="stylesheet" href="./css/jquery.flipster.min.css" -->
     <!-- link rel="stylesheet" href="./css/styles.css" -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="carousel-3d/dist/styles/jquery.carousel-3d.default.css">
     <link rel="stylesheet" type="text/css" href="css/wutz.css" />
     <link rel="stylesheet" type="text/css" href="css/clouds.css" />
@@ -25,75 +27,66 @@
 	<div class="cloud x5"></div>
 </div>
 <!-- Thats the markup! -->
-<!-- That looks cool. We are done!! -->    
-<div id="mainContainer">
+<!-- That looks cool. We are done!! -->
+<div id="mainContainer" class="container">
         <!--div id="audioContainer"></div -->
-        <section id="playerHeader">
-            <img src="img/icon.png" width="50" height="50" />
-            <div id="headerOptions">
-                <img src="img/bars-black.png" data-bind="click: toogleHeaderMenu"/>
+        <section id="playerHeader" class="row">
+            <div class="col-md-2 icon">
+              <img src="img/icon.png" width="50" height="50" />
+            </div>
+            <div class="col-md-8 barInfo">
+                Bar Id : <span data-bind="html:barInfo().barId"></span> |
+                Token del día : <span data-bind="html:barInfo().dayToken"></span>
+            </div>
+            <div class="col-md-2 options">
+              <a class="btn btn-success" href="#" data-bind="click: setFullScreen">
+                 <i class="fa fa-expand" aria-hidden="true" title="Pantalla Completa"></i>
+              </a>
+              <a class="btn btn-success" href="#" data-bind="click: forwardSong">
+                 <i class="fa fa-forward" aria-hidden="true" title="Siguiente Canción"></i>
+              </a>
+              <a class="btn btn-success" href="#" data-bind="click: exitPlayer">
+                 <i class="fa fa-eject" aria-hidden="true" title="Salir de Reproductor"></i>
+              </a>
             </div>
         </section>
-        <section class='wrapper'>
-            <div data-carousel-3d>
+        <section class="row carouselContainer">
+            <div data-carousel-3d class="col-md-12">
 
             </div>
         </section>
-        <div style="display: none" id="cleanCarousel" data-bind="foreach: { data: playList, as: 'song' }">
-            <div class="songContain" data-bind="attr:{'id': 'cont_'+song.songid}">
-                <img class="backImage"  src="./img/fronts/defaultSong.png" />
-                <img class="mainImg" src="./img/fronts/defaultSong.png" />
-                
-                <div class="songInfo">
-                    <h2 class="infoSec">Artist:</h2><h2 class="sliderCol"><span data-bind="html:song.artist"></span></h2>
-                    <h2 class="infoSec">Album:</h2><h2 class="sliderCol"><span class="marquee" data-bind="html:song.album"></span></h2>
-                    <h2 class="infoSec">Song:</h2><h2 class="sliderCol"><span class="marquee" data-bind="html:song.name"></span></h2>
-                </div>
+
+        <section class="row">
+          <div class="col-md-12">
+            <div id="playList" data-bind="foreach: { data: playList, as: 'song' }">
+                  <div class="row">
+                    <div class="col-md-2">
+                          <input type="hidden" id="songId" data-bind="attr: {'value':song.songid}" />
+                          <div data-bind="html:song.htmlAudioObject"></div>
+                    </div>
+                    <div class="col-md-2"><span data-bind="html:song.artist"></span></div>
+                    <div class="col-md-4"><span data-bind="html:song.album"></span></div>
+                    <div class="col-md-4"><span data-bind="html:song.name"></span></div>
+                  </div>
             </div>
-        </div>
-        <!-- section class="qrInfoSection">
-            <div>
-                <img id="qrAppImg" src="" /><br/>
-            </div>
-            
-        </section -->
-        <section class="playListSection">
-          <table class="bordered">
-            <thead>
-            <tr>
-                <th>&nbsp;</th>
-                <th>Artist</th>
-                <th>Album</th>
-                <th>Song</th>
-            </tr>
-            </thead>
-            <tbody id="playList" data-bind="foreach: { data: playList, as: 'song' }">
-                 <tr class="">
-                     <td style="width: 20%">
-                         <input type="hidden" id="songId" data-bind="attr: {'value':song.songid}" />
-                         <p data-bind="html:song.htmlAudioObject"></p>
-                     </td>
-                     <td data-bind="html:song.artist" style="width: 20%"></td>
-                     <td class="sliderCol" style="width: 20%"><span data-bind="html:song.album"></span></td>
-                     <td class="sliderCol"><span data-bind="html:song.name"></span></td>
-                </tr>
-            </tbody>
-        </table>
+          </div>
       </section>
 </div>
-<div id="headerMenu">
-      <ul>
-          <li data-bind="click: setFullScreen">
-              <img data-bind="attr:{'src':fullScr().imgSrc}" /> 
-              <span data-bind="html:fullScr().text"></span>
-          </li>
-          <li data-bind="click: forwardSong"><img src="img/carat-r-white.png" /><img src="img/carat-r-white.png" /> Next Song</li>
-          <li data-bind="click: exitPlayer"><img src="img/delete-white.png" /> Exit Player</li>
-          <li data-bind="click: toogleHeaderMenu"><img src="img/back-white.png" /> Cancel</li>
-      </ul>
+<div style="display: none" id="cleanCarousel" data-bind="foreach: { data: playList, as: 'song' }">
+    <div class="songContain" data-bind="attr:{'id': 'cont_'+song.songid}">
+        <img class="backImage"  src="./img/fronts/defaultSong.png" />
+        <img class="mainImg" src="./img/fronts/defaultSong.png" />
+
+        <div class="songInfo">
+            <h2 class="infoSec">Artist:</h2><h2 class="sliderCol"><span data-bind="html:song.artist"></span></h2>
+            <h2 class="infoSec">Album:</h2><h2 class="sliderCol"><span class="marquee" data-bind="html:song.album"></span></h2>
+            <h2 class="infoSec">Song:</h2><h2 class="sliderCol"><span class="marquee" data-bind="html:song.name"></span></h2>
+        </div>
+    </div>
 </div>
 
 <script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>
+<script id="btLnk" type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
 <script src="js/jquery.resize.js"></script>
 <script src="js/jquery.waitforimages.js"></script>
@@ -103,7 +96,7 @@
 <script type="text/javascript" src="js/textSlider.js"></script>
 <script type="text/javascript" src="js/wutzPlayerManager.js"></script>
 <script type="text/javascript" src="js/lib/youtubePlayer.js"></script>
-  
+
 <!-- script src="./js/jquery.flipster.min.js"></script -->
 <!-- script src="./js/script.js"></script -->
 </body>

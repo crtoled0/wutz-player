@@ -7,17 +7,12 @@ var logger = require('./log4Wutz');
 var os = require('os');
 //var app2WutzAdm = require("./app2wutzAdm");
 var fs = require('fs');
-
 var sep = os.platform()==="win32"?"\\":"/";
 var wutzEdidFsPath = os.homedir()+sep+".wutz";
 window.sessionStorage.setItem("homePath",wutzEdidFsPath);
-
 var configPath = wutzEdidFsPath+sep+"json/config.json";
 var catalogPath = wutzEdidFsPath+sep+"json/catalog.json";
-
 var conf;
-
-
 var serverConfMapp = {"desc": "desc",
                       "email": "email",
                       "id": "bar_id",
@@ -60,12 +55,15 @@ window.AjaxWAdmin.callService("login",authAcc,"POST",function(result){
 
 
 var register = function(regData,callback) {
-
   window.AjaxWAdmin.callService("registerBar",regData,"POST",function(result){
-  //app2WutzAdm.goPost("registerBar",regData, function(result){
-      //console.log("I'm back ["+result+"]");
       callback(result);
   });
+};
+
+var isUserIdAvailable = function(userId, callback){
+   window.AjaxWAdmin.callService("isBarAvailable/"+userId,null,"GET",function(result){
+        callback({id:userId,available:result.available});
+   });
 };
 
 var commitBarChanges = function(callback) {
@@ -73,6 +71,38 @@ var commitBarChanges = function(callback) {
    window.AjaxWAdmin.callService("uploadLocalServerInfo",conf,"POST", sesTkn,function(result){
  //   app2WutzAdm.goPost("uploadLocalServerInfo",conf, function(result){
     //  console.log("I'm back ["+result+"]");
+      callback(result);
+  });
+};
+
+var cleanCatalogPlayList = function(bar,callback) {
+  var sesTkn = window.sessionStorage.getItem("wutzSessToken");
+  var regData = {catId:bar.idcatalog,token:bar.dayToken};
+  window.AjaxWAdmin.callService("cleanCatalog",regData,"POST", sesTkn,function(result){
+      callback(result);
+  });
+};
+
+var requestRecPassword = function(barId,callback) {
+  console.log("rec call");
+  window.AjaxWAdmin.callService("requestRecoverPassCode/"+barId,null,"POST",function(result){
+      callback(result);
+  });
+};
+
+var sendNewRecPassword = function(barId,code,newPass,callback) {
+  var regData = {barId:barId,
+                 code:code,
+                 newPass:newPass
+                };
+  window.AjaxWAdmin.callService("sendPassRecoverPassCode",regData,"POST",function(result){
+      callback(result);
+  });
+};
+
+var cleanCatalogPlayList = function(bar,callback) {
+  var regData = {catId:bar.idcatalog,token:bar.dayToken};
+  window.AjaxWAdmin.callService("cleanCatalog",regData,"POST",function(result){
       callback(result);
   });
 };
@@ -139,5 +169,9 @@ module.exports = {
   commitBarChanges: commitBarChanges,
   register: register,
   login : login,
-  isThereCatalogFileLoaded: isThereCatalogFileLoaded
+  isThereCatalogFileLoaded: isThereCatalogFileLoaded,
+  isUserIdAvailable: isUserIdAvailable,
+  cleanCatalogPlayList: cleanCatalogPlayList,
+  requestRecPassword:requestRecPassword,
+  sendNewRecPassword:sendNewRecPassword
 };

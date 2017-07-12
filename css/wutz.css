@@ -8,6 +8,24 @@ and open the template in the editor.
     Author     : cristian toledo
 */
 
+/* SCROLLBAR */
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgb(0,0,0);
+    border: 4px solid transparent;
+    background-clip: content-box;   // this is important
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(255,255,255);
+    border: 1px solid rgb(0,0,0);
+}
 
 body {
     width: 100%;
@@ -181,14 +199,17 @@ table {
     border-radius: 0 0 6px 6px
 }
 
-.playingRow
-{
-   background: #000000 !important;
-   color: #00FF00 !important;
+.playingRow{
+   background: rgba(24,33,31, 1) !important;
+  /* background: rgba(217,83,79, .7) !important; */
+  /**  background: #000000 !important; **/
+  color: #5cb85c !important;
+  font-weight: bold !important;
+  border-top: solid 1px #5cb85c;
+  border-bottom: solid 1px #5cb85c;
 }
-.playingRow td:first-child
-{
-   background: transparent;
+.playingRow div:first-child{
+   background: transparent !important;
 }
 /** New Version **/
 .wrapper {
@@ -202,7 +223,7 @@ table {
    position: absolute;
    right: 0;
    left: 0;
-   top: 10%;
+   top: 4%;
    margin: auto;
 }
 
@@ -219,18 +240,15 @@ table {
     right: 10%;
     max-width: 300px;
     background-color: #000000;
-    color: #00FF00;
+    color: #5cb85c;
     border-radius: 10px;
     opacity: 0.8;
     padding: 10px;
     z-index:15;
-}
-
-.songContain .songInfo{
-
     width: 100%;
     overflow:hidden;
 }
+
 
 .songContain .backImage{
     position: absolute;
@@ -261,6 +279,8 @@ table {
     width: 100%;
     position: relative;
     float: right;
+    max-height: 400px;
+    overflow-y: scroll;
 }
 
 audio{
@@ -285,25 +305,34 @@ audio{
 }
 
 #playerHeader{
-    height: 50px;
-    background-color: #ffffff;
-    width: 100%;
-    opacity: 0.5;
+    height: 80px;
+
+    background: rgba(00, 00, 00, 0.7);
    /** padding: 3px; **/
    border-top-right-radius: 3px;
    border-top-left-radius: 3px;
 }
 
-#playerHeader img{
-    margin-left: 3px;
+#playerHeader .icon{
+    margin-top: 14px;
 }
 
-#playerHeader #headerOptions{
-    float: right;
-    height: 100%;
+#playerHeader .barInfo{
+    margin-top: 30px;
+    color: #5cb85c;
+}
+
+#playerHeader .options{
+   text-align: right;
+   margin-top: 23px;
+}
+
+#playerHeader .options i{
+
 }
 
 #playerHeader #headerOptions img{
+
     margin-right: 10px;
     margin-top: 60%;
     vertical-align: middle;
@@ -355,4 +384,28 @@ audio{
                 transform: translateX(-50%) translateY(-50%);
                 z-index: 100;
                 background-size: cover;
+}
+
+h2{
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 18px;
+}
+
+.carouselContainer{
+   height: 300px;
+}
+
+#playList{
+  border-radius: 15px 15px 0px 0px;
+  color: #eeeeee;
+}
+
+#playList .row{
+   background: rgba(00, 00, 00, 0.7);
+   border-top: 1px solid #555555;
+}
+
+#playList .col-md-2,.col-md-4{
+   margin-top: 10px;
 }

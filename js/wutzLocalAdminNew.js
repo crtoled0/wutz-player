@@ -38,25 +38,27 @@ function AppViewModel() {
         var sessLoaded = JSON.parse(window.localStorage.getItem("wutzSess"));
         sessionLoaded = JSON.parse(JSON.stringify(sessLoaded));
         mainMod.loadedBar(barLoaded);
-        setSessionToken();
-        callback(true);
+        setSessionToken(function(){
+            callback(true);
+        });
      }
 	};
 
   var autoLoginTries = 0;
-  var setSessionToken = function(){
+  var setSessionToken = function(callback){
      if(!sessionToken){
        relogin(function(sessTkn){
          if(!sessTkn){
            if(autoLoginTries === 0){
                autoLoginTries++;
-               setSessionToken();
+               setSessionToken(callback);
            }
            else
               genMessageBox("Login Fallido","Necesita loguearse nuevamente");
          }
          else
            sessionToken = sessTkn;
+           callback();
        });
      }
   };
@@ -135,6 +137,7 @@ function AppViewModel() {
           }
           //$('#loadingPageModal').modal("hide");
           $("#loadingDiv").hide();
+          loadIndexPreviewInfo();
       });
 
     };
@@ -146,6 +149,8 @@ function AppViewModel() {
     var logOut = function(){
     	 window.localStorage.removeItem("wutzLoadedBar");
        window.localStorage.removeItem("wutzSess");
+       mainMod.loadedBar(JSON.parse(JSON.stringify(formBarTemp)));
+       sessionToken = null;
        init();
     };
     var loadCatalog = function(){
@@ -245,6 +250,9 @@ function AppViewModel() {
                 window.sessionStorage.setItem("wutzSessToken",_res.token);
                 init();
                 $("#loginModal").modal("hide");
+                if(mainMod.isJustRegister()){
+                  $("#editBarModal").modal("show");
+                }
 
             }
             else{
@@ -641,6 +649,10 @@ function AppViewModel() {
                           mainMod.genericProgressBar(getProgBar);
                           $("#editCatalogMod").modal("hide");
                            console.log("Process Finished");
+                           if(mainMod.isJustRegister()){
+                             mainMod.isJustRegister(false);
+                             $("#available_yn").bootstrapToggle('on');
+                           }
                         }
                   });
           });
@@ -726,8 +738,158 @@ function AppViewModel() {
                   }
               });
     };
+// Index Preview Functions
+    var loadIndexPreviewInfo = function(){
+      console.log("Starting loadIndexPreviewInfo");
+      var artPicMap = {};
+    //  var idxPrev = mainMod.indexPreview();
+        var idxPrev = {isCatalogLoaded:false,
+                       isPlaylistLoaded:false,
+                       catalogLoaded:[],
+                       playlistLoaded:[]};
+        mainMod.indexPreview(idxPrev);
+        if(mainMod.loadedBar().idcatalog && mainMod.loadedBar().idcatalog !== ""){
+            var idCat = mainMod.loadedBar().idcatalog;
+            var dayToken = mainMod.loadedBar().dayToken;
+             catAdm.getCatalogArtistList(idCat,function(_res){
+                if(_res && _res.length > 0){
+                  for(var i in _res){
+                    if(!_res[i]["lfm_img_url"] || _res[i]["lfm_img_url"] === ""){
+                        _res[i]["lfm_img_url"] = "./img/icon.png";
+                        _res[i]["showName"] = true;
+                    }
+                    artPicMap[_res[i].name] = _res[i]["lfm_img_url"];
+                  }
+                  idxPrev.isCatalogLoaded = true;
+                  idxPrev.catalogLoaded = _res;
+                  mainMod.indexPreview(idxPrev);
+                  console.log(mainMod.indexPreview());
+                }
+                catAdm.getPendingPlayList(idCat,dayToken,function(_res2){
+                  if(_res2 && _res2.length > 0){
+                    for(var i in _res2){
+                      if(!_res2[i].album_info)
+                          _res2[i].pic = artPicMap[_res2[i].artist];
+                    }
+                    idxPrev.isPlaylistLoaded = true;
+                    idxPrev.playlistLoaded = _res2;
+                    mainMod.indexPreview(idxPrev);
+                    console.log(mainMod.indexPreview());
+                  }
+                });
+             });
+        }
+    };
 
+    var saveBarInfo = function(){
+      $("#loadingDiv").show();
+       commitBar(function(){
+           $("#loadingDiv").hide();
+           $('#editBarModal').modal("hide");
+           if(mainMod.isJustRegister()){
+             $("#locationgModal").modal("show");
+           }
+       });
+    };
 
+    var registerBar = function(){
+      $("#loadingDiv").show();
+        var errorMsg = "";
+        var barPar2register = {
+                bar_id:$("#reg_barId").val(),
+                email:$("#reg_email").val(),
+                pass:$("#reg_pass").val(),
+                rep_password:$("#reg_rep_password").val()
+        };
+        if(!barPar2register.bar_id || !barPar2register.email || !barPar2register.pass || !barPar2register.rep_password ||
+           barPar2register.bar_id === "" || barPar2register.email === "" || barPar2register.pass === "" || barPar2register.rep_password === ""){
+            errorMsg += ".- Todos los campos son obligatorios<br/>";
+        }
+        if(barPar2register.pass !== barPar2register.rep_password){
+            errorMsg += ".- El campos de password deben ser iguales<br/>";
+        }
+        if(errorMsg !== ""){
+          $("#loadingDiv").hide();
+          genMessageBox("Error",errorMsg);
+        }
+        else{
+          bAdm.isUserIdAvailable(barPar2register.bar_id,function(_isAval){
+              if(_isAval.available){
+                bAdm.register(barPar2register, function(_res){
+                    $("#loadingDiv").hide();
+                    if(_res.OK){
+                        genMessageBox("Bar creado!","El id "+_isAval.id+" fue creado con exito. Inicie sesión para continuar con la configuración de este.");
+                        mainMod.isJustRegister(true);
+                        $("#registerBarModal").modal("hide");
+                        $("#idOrMail").val(_isAval.id);
+                    }
+                });
+              }
+              else{
+                $("#loadingDiv").hide();
+                  genMessageBox("Error","El id "+_isAval.id+" ya está usado. Intente de nuevo");
+              }
+          });
+        }
+    };
+
+    var cleanCatPlaylist = function(){
+        bAdm.cleanCatalogPlayList(mainMod.loadedBar(),function(_res){
+            if(_res.OK){
+               loadIndexPreviewInfo();
+            }
+            else{
+               genMessageBox("Error","El catálogo no pudo ser refrescado. Asegurese que la lista ya no esté vacía e intente nuevamente");
+            }
+        });
+    };
+
+    var reqRecPassword = function(){
+      var barid = $("#idOrMail").val();
+      if(!barid || barid === ""){
+          genMessageBox("","¿Cuál es el id de su bar/evento?");
+          return ;
+      }
+      bAdm.requestRecPassword(barid ,function(_res){
+          if(_res.OK){
+              $("#recoverPassModal").modal("show");
+          }
+          else{
+             genMessageBox("Error","No se pudo hacer la solicitud. Por favor intente más tarde.");
+          }
+      });
+    };
+
+    var sendRecPassword = function(){
+        var barid = $("#idOrMail").val();
+        var code = $("#recp_code").val();
+        var newPass = $("#recp_pass").val();
+        var newPassRep = $("#recp_rep_password").val();
+        var errorMsg = "";
+        if(!barid || !code || !newPass || !newPassRep ||
+           barid === "" || code === "" || newPass === "" || newPassRep === ""){
+            errorMsg += ".- Todos los campos son obligatorios<br/>";
+        }
+        if(newPass !== newPassRep){
+            errorMsg += ".- El campos de password deben ser iguales<br/>";
+        }
+        if(errorMsg !== ""){
+          genMessageBox("Error",errorMsg);
+          return ;
+        }
+        bAdm.sendNewRecPassword(barid,code,newPass,function(_res){
+              if(_res.OK){
+                 genMessageBox("","El password fue cambiado exitosamente. Intente loguearse con su nueva clave.");
+                 $("#recoverPassModal").modal("hide");
+              }
+              else if(_res.msg !== "PassNoUpd"){
+                 genMessageBox("Error","El código de reseteo ingresado no es válido.");
+              }
+              else{
+                 genMessageBox("Error","Ha ocurrido un error al resetear su password. Por favor intente más tarde");
+              }
+        });
+    };
  //Observable Definitions
 
    // mainMod.playList = ko.observableArray([]);
@@ -753,6 +915,13 @@ function AppViewModel() {
                                        selectedSongArtist:{name:""},
                                        selectedSongAlbum:{name:""}
                                     });
+
+    mainMod.indexPreview = ko.observable({isCatalogLoaded:false,
+                                          isPlaylistLoaded:false,
+                                          catalogLoaded:[],
+                                          playlistLoaded:[]});
+
+   mainMod.isJustRegister = ko.observable(false);
  //Observable Functions Definitions
 
  	mainMod.logOut= logOut;
@@ -780,6 +949,11 @@ function AppViewModel() {
   mainMod.mark2DelSelectedSong = mark2DelSelectedSong;
   mainMod.deleteSelectedAlbum = deleteSelectedAlbum;
   mainMod.deleteSelectedArtist = deleteSelectedArtist;
+  mainMod.saveBarInfo = saveBarInfo;
+  mainMod.registerBar = registerBar;
+  mainMod.cleanCatPlaylist = cleanCatPlaylist;
+  mainMod.reqRecPassword = reqRecPassword;
+  mainMod.sendRecPassword = sendRecPassword;
 };
 
 // Activates knockout.js

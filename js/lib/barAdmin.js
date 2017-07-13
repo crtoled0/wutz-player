@@ -100,13 +100,6 @@ var sendNewRecPassword = function(barId,code,newPass,callback) {
   });
 };
 
-var cleanCatalogPlayList = function(bar,callback) {
-  var regData = {catId:bar.idcatalog,token:bar.dayToken};
-  window.AjaxWAdmin.callService("cleanCatalog",regData,"POST",function(result){
-      callback(result);
-  });
-};
-
 var saveConfigFile = function(conf,callback) {
       fs.createWriteStream(configPath);
       fs.appendFile(configPath, JSON.stringify(conf), function (err) {

@@ -56,9 +56,10 @@ function AppViewModel() {
            else
               genMessageBox("Login Fallido","Necesita loguearse nuevamente");
          }
-         else
+         else{
            sessionToken = sessTkn;
            callback();
+         }
        });
      }
   };

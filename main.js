@@ -16,8 +16,8 @@ app.on('window-all-closed', function() {
   if (process.platform != 'darwin') {
     app.quit();
   }
-  
-  
+
+
 });
 
 ipcMain.on('setFullScreen', function(event, arg) {
@@ -33,32 +33,40 @@ ipcMain.on('toogFullScreen', function(event, arg) {
   //event.returnValue = app.getAppPath();
    if (mainWindow)
            mainWindow.setFullScreen(!mainWindow.isFullScreen());
-   
+
    event.returnValue = true;
 });
 
 
 ipcMain.on('exitAndRunInstaller', function(event, arg) {
   //event.returnValue = app.getAppPath();
-  
+
   var child = require('child_process');
   child.fork("D:/WorkP/projects/electron/WutzPlayer/js/jobs/executeUpdateInstaller.js");
-  
+
    // if (mainWindow)
      //      mainWindow.close();
-     
-     
+
+
      event.returnValue = true;
 });
 
 ipcMain.on('justClose', function(event, arg) {
   //event.returnValue = app.getAppPath();
-  
+
     if (mainWindow)
            mainWindow.close();
-    
+
     event.returnValue = true;
 });
+
+ipcMain.on('minimize', function(event, arg) {
+  //event.returnValue = app.getAppPath();
+    if (mainWindow)
+           mainWindow.minimize();
+    event.returnValue = true;
+});
+
 
 
 ipcMain.on('getAppPath', function(event, arg) {
@@ -75,7 +83,12 @@ ipcMain.on('isDevMode', function(event, arg) {
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1300, height: 625, 'web-preferences': {'web-security': false}});
+  mainWindow = new BrowserWindow({width: 1300,
+                                  height: 625,
+                                  frame: false ,
+                                  titleBarStyle: 'customButtonsOnHover',
+                                  transparent: true,
+                                  'web-preferences': {'web-security': false}});
 
   // and load the index.html of the app.
   //mainWindow.loadURL('file://' + __dirname + '/index.html');

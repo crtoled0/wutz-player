@@ -247,3 +247,35 @@ button{
   font-size: 15px;
   font-weight: bold;
 }
+
+.windowOpt .navbar-text{
+   margin-right: 1px;
+   margin-left: 1px;
+}
+
+.windowOpt .navbar-text span{
+    cursor: pointer;
+}
+
+.wutzNavBar{
+    margin-top: 20px;
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+}
+
+.wutzNavBar li{
+  -webkit-app-region: no-drag;
+}
+
+.langDD-btn{
+  padding: 0px 0px !important; 
+  background-color: #222 !important;
+  color: #fff !important;
+  border-color: #222 !important;
+}
+
+.langDD-ul{
+  background-color: #222 !important;
+  z-index: 3000 !important;
+  min-width:60px !important;
+}

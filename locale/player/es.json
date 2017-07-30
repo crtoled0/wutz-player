@@ -1,0 +1,8 @@
+{
+  "barId":"Bar Id",
+  "dayToken":"Token del día",
+  "hideBarInfo":"Esconder información del bar",
+  "fullscreen":"Pantalla Completa",
+  "nextSong":"Siguiente Canción",
+  "exitPlayer":"Salir del Reproductor"
+}

@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2016 CRTOLEDO.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+
 function AppViewModel() {
 
    //Observable Definitions
@@ -6,6 +25,7 @@ function AppViewModel() {
     mainMod.filePlaying = ko.observable();
     mainMod.fullScr = ko.observable({"imgSrc":"img/plus-white.png","text":"Full Screen"});
     mainMod.barInfo = ko.observable({catid: "",dayToken: ""});
+    mainMod.locale = ko.observable({});
 
 
     //mainMod.picMap = ko.observable({"others":"./img/fronts/defaultSong.png"});
@@ -21,9 +41,11 @@ var brokenSongs = [];
 var ytMap = {};
 
 $(document).ready(function() {
-
+    var locLang = localStorage.getItem("loadedLang");
+    locale.loadWutzTranslator(locLang,"player",function(attr){
+        mainMod.locale(attr);
+    });
     $.getJSON( homePath+"/json/config.json", function(_config) {
-
        // var qrUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+_config.downloadAppURL+"&v="+Math.random();
        // $("#qrAppImg").attr("src",qrUrl);
         config = _config;
@@ -81,13 +103,25 @@ this.loadAndPlayRandomSong = function(){
       });
 };
 
+var handleFullOptions = function(vid){
+   vid.off("mousemove");
+   $("#playerHeader").css("opacity",1);
+     $("#playerHeader").animate({opacity:0}, 9000, function(){
+          vid.mousemove(function(){
+          handleFullOptions(vid);
+      });
+   });
+};
+
 this.loadAndPlaySong = function(song){
 
     try{
-
       if($.inArray(song.songid,brokenSongs) === -1){
-        if(song.media_type === "video" && song.extension !== "tube")
+        if(song.media_type === "video" && song.extension !== "tube"){
             $("#"+song.songid).addClass("fullscreenvideo");
+            $("#playerHeader").removeClass("showHeaderFullScrn").addClass("showHeaderFullScrn");
+            handleFullOptions($("#"+song.songid));
+        }
         if(song.extension !== "tube"){
                 $("#"+song.songid).get(0).addEventListener("error", function (err) {
                     //alert("Algo Falló");
@@ -124,12 +158,12 @@ this.songChecker = function(audioMedia){
 
    var inter = setInterval(function()
     {
-        if(audioMedia.ended)
-        {
+        if(audioMedia.ended){
             clearInterval ( inter );
             logger.info("Song Ended");
             if(mainMod.playList()[0].media_type === "video"){
                $("#"+mainMod.playList()[0].songid).removeClass("fullscreenvideo");
+              // $("video").off("mousemove");
             }
             if(mainMod.playList().length > 0)
                 mainMod.goNextQueue();
@@ -156,6 +190,9 @@ this.youtubeEndSong = function(){
 
 this.goNextQueue = function(){
 
+    $("#playerHeader").stop();
+    $("#playerHeader").removeClass("showHeaderFullScrn");
+    $("#playerHeader").css("opacity",1);
     //comingfromArrow = comingfromArrow?true:false;
    //if($("#playList").children().size() > 1)
    if(mainMod.playList().length > 1) {
@@ -271,7 +308,7 @@ this.loadFullCatalogReturn = function(jsonRes){
               //  mainMod.playList.push(tempSong);
                 mp3t.loadFrontAlbumPic(tempSong, function(song){
                     //tempSong.pic =  imgPath;
-                    if(song.err === undefined)
+                    if(!song.err)
                         $("#cont_"+song.songid+" img").attr("src",song.pic);
                     else{
                         logger.info("Song With Issues : "+song.songid+"["+song.file_name+"]["+song.exc+"]");
@@ -372,12 +409,6 @@ this.loadFullCatalogReturn = function(jsonRes){
         menuObj.animate({width:"0px"},1000);
         ipc.sendSync('toogFullScreen');
 
-        if(mod.fullScr().text === "Full Screen"){
-            mod.fullScr({"imgSrc":"img/minus-white.png","text":"Exit Full Screen"});
-        }
-        else{
-            mod.fullScr({"imgSrc":"img/plus-white.png","text":"Full Screen"});
-        }
 
           $(document).keyup(function(e) {
             if (e.keyCode == 27) { // escape key maps to keycode `27`

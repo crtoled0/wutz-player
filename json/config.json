@@ -1,7 +1,7 @@
 {
-  "bar_id": "te_fija_ono",
-  "catid": "91",
-  "musicPath": "C:\\Users\\CRTOLEDO\\Music",
+  "bar_id": "",
+  "catid": "",
+  "musicPath": "",
   "separator": "\\",
   "serverhost": "http://wutz.co.uk",
   "localProwser": "/bwclient/index.html",
@@ -12,12 +12,12 @@
   "superClient": [
     "22ff919a-23c0-415b-9b29-09496ad81e07"
   ],
-  "nombreBar": "InstiTuto's",
-  "representante": "Cristian Toledo",
-  "telefono": "77486050",
-  "email": "cristiantoledo@gmail.com",
-  "latitude": "-32.88813",
-  "longitute": "-71.23757",
-  "dayToken": "123123",
-  "desc": "Santa Teruca, al frente de la cancha'e kro ."
+  "nombreBar": "",
+  "representante": "",
+  "telefono": "",
+  "email": "",
+  "latitude": "",
+  "longitute": "",
+  "dayToken": "",
+  "desc": ""
 }

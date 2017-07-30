@@ -1,3 +1,21 @@
+<!--
+Copyright (C) 2017 CRTOLEDO.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA 02110-1301  USA
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,23 +48,27 @@
 <!-- That looks cool. We are done!! -->
 <div id="mainContainer" class="container">
         <!--div id="audioContainer"></div -->
-        <section id="playerHeader" class="row">
+        <section id="playerHeader" class="row wutzNavBar">
             <div class="col-md-2 icon">
               <img src="img/icon.png" width="50" height="50" />
             </div>
             <div class="col-md-8 barInfo">
-                Bar Id : <span data-bind="html:barInfo().barId"></span> |
-                Token del día : <span data-bind="html:barInfo().dayToken"></span>
+                <span class="label label-success">
+                  <span data-bind="html:locale()['barId']">Bar Id</span> : <span data-bind="html:barInfo().barId"></span> |
+                  <span data-bind="html:locale()['dayToken']">Token del día </span>: <span data-bind="html:barInfo().dayToken"></span>
+                </span>
+                &nbsp;
+                <span data-bind="click:function(){$('.barInfo span').hide()},attr:{'title':locale()['hideBarInfo']}" title="-" style="cursor: pointer;"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
             </div>
             <div class="col-md-2 options">
-              <a class="btn btn-success" href="#" data-bind="click: setFullScreen">
-                 <i class="fa fa-expand" aria-hidden="true" title="Pantalla Completa"></i>
+              <a class="btn btn-success" href="#"  title="Pantalla Completa" data-bind="click: setFullScreen,attr:{'title':locale()['fullscreen']}">
+                 <i class="fa fa-expand" aria-hidden="true"></i>
               </a>
-              <a class="btn btn-success" href="#" data-bind="click: forwardSong">
-                 <i class="fa fa-forward" aria-hidden="true" title="Siguiente Canción"></i>
+              <a class="btn btn-success" href="#" title="Siguiente Canción" data-bind="click: forwardSong,attr:{'title':locale()['nextSong']}">
+                 <i class="fa fa-forward" aria-hidden="true" ></i>
               </a>
-              <a class="btn btn-success" href="#" data-bind="click: exitPlayer">
-                 <i class="fa fa-eject" aria-hidden="true" title="Salir de Reproductor"></i>
+              <a class="btn btn-success" href="#" title="Salir de Reproductor" data-bind="click: exitPlayer,attr:{'title':locale()['exitPlayer']}">
+                 <i class="fa fa-eject" aria-hidden="true" ></i>
               </a>
             </div>
         </section>
@@ -74,8 +96,8 @@
 </div>
 <div style="display: none" id="cleanCarousel" data-bind="foreach: { data: playList, as: 'song' }">
     <div class="songContain" data-bind="attr:{'id': 'cont_'+song.songid}">
-        <img class="backImage"  src="./img/fronts/defaultSong.png" />
-        <img class="mainImg" src="./img/fronts/defaultSong.png" />
+        <img class="backImage" data-bind="attr:{'src': song.pic}"  /> <!-- ./img/fronts/defaultSong.png -->
+        <img class="mainImg" data-bind="attr:{'src': song.pic}" />
 
         <div class="songInfo">
             <h2 class="infoSec">Artist:</h2><h2 class="sliderCol"><span data-bind="html:song.artist"></span></h2>
@@ -94,6 +116,7 @@
 <script id="carouselImp" src="carousel-3d/dist/jquery.carousel-3d.js"></script>
 <script type="text/javascript" src="js/knockout-3.4.0.js"></script>
 <script type="text/javascript" src="js/textSlider.js"></script>
+<script type="text/javascript" src="js/lib/WutzTranslator.js"></script>
 <script type="text/javascript" src="js/wutzPlayerManager.js"></script>
 <script type="text/javascript" src="js/lib/youtubePlayer.js"></script>
 

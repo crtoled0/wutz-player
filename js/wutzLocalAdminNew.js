@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2016 CRTOLEDO.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+
 function AppViewModel() {
 
   var mainMod = this;
@@ -5,6 +24,8 @@ function AppViewModel() {
 	var bAdm   = require('./js/lib/barAdmin');
 	var catAdm = require("./js/lib/catalogTools");
   var genTool = require("./js/lib/genericTools");
+  var fs  = require("fs");
+  var ipc = require('electron').ipcRenderer;
 
 	var formBarTemp = {
 				  "id": "",
@@ -53,8 +74,10 @@ function AppViewModel() {
                autoLoginTries++;
                setSessionToken(callback);
            }
-           else
-              genMessageBox("Login Fallido","Necesita loguearse nuevamente");
+           else{
+              $("#loadingDiv").hide();
+              genMessageBox(locale.trans("login.failed.title"),locale.trans("login.failed.msg"));
+            }
          }
          else{
            sessionToken = sessTkn;
@@ -62,6 +85,8 @@ function AppViewModel() {
          }
        });
      }
+     else
+        callback();
   };
 
   var relogin = function(callback){
@@ -90,7 +115,7 @@ function AppViewModel() {
       // Curr Map Options
       $("#searchLoc").remove();
       $("#mapholder").remove();
-      $("#locationMapContainer").append($("<input type=\"text\" class=\"controls\" id=\"searchLoc\" name=\"searchLoc\" placeholder=\"Buscar Direccion\" />"));
+      $("#locationMapContainer").append($("<input type=\"text\" class=\"controls\" id=\"searchLoc\" name=\"searchLoc\" placeholder=\""+locale.trans("loc.searchPlaH")+"\" />"));
       $("#locationMapContainer").append($("<div id=\"mapholder\"></div>"));
       if(!mainMod.loadedBar().lat || mainMod.loadedBar().lat ==="" || !mainMod.loadedBar().lon || mainMod.loadedBar().lon ==="")
           getLocationsMap();
@@ -128,9 +153,10 @@ function AppViewModel() {
           else{
             console.log("INIT Started");
             loadBar2Page();
+            $('#available_yn').bootstrapToggle('destroy');
             $('#available_yn').bootstrapToggle({
-                on: 'Abierto',
-                off: 'Cerrado',
+                on: locale.trans("open"),
+                off: locale.trans("close"),
                 onstyle: 'success',
                 offstyle:'danger',
                 size: "mini"
@@ -144,8 +170,28 @@ function AppViewModel() {
     };
 
     $(document).ready(function(){
-    	init();
+      var ctryMapp; //= fs.readFileSync("./json/countryMapp.json");//JSON.parse(fs.readFileSync("./json/countryMapp.json"));
+          $.get("./json/countryMapp.json",function(_ctryMapp){
+              ctryMapp = JSON.parse(_ctryMapp);
+              mainMod.languages(ctryMapp.languages);
+              if(!localStorage.getItem("loadedLang")){
+                  loadLocalInfo(function(_countryNode){
+                     var localLang = ctryMapp.countries[_countryNode.short_name]?ctryMapp.countries[_countryNode.short_name].lang:"en";
+                     pickLanguage(localLang,function(){
+                        // init();
+                     });
+                  });
+              }
+              else{
+                pickLanguage(localStorage.getItem("loadedLang"),function(){
+                    //init();
+                });
+              }
+          });
+
     });
+
+
 
     var logOut = function(){
     	 window.localStorage.removeItem("wutzLoadedBar");
@@ -212,7 +258,7 @@ function AppViewModel() {
                 allOK = false;
             }
             if(!allOK)
-              genMessageBox("Error","Los cambios nos fueron guardados por un error interno, intentelo de nuevo más tarde");
+              genMessageBox(locale.trans("error"),locale.trans("bar.changedNotSaved"));
           });
       });
     };
@@ -254,10 +300,10 @@ function AppViewModel() {
                 if(mainMod.isJustRegister()){
                   $("#editBarModal").modal("show");
                 }
-
             }
             else{
-              genMessageBox("Login Fallido","Usuario o contraseña incorrectos </br> Si no está registrado registrese en www.wutznet.com");
+              $("#loadingDiv").hide();
+              genMessageBox(locale.trans("login.failed.title"),locale.trans("login.failed.msg2"));
             }
         });
 
@@ -270,12 +316,29 @@ function AppViewModel() {
 
 
     var getLocationsMap = function() {
-
           console.log("Getting Location Map");
         $.get('https://maps.googleapis.com/maps/api/browserlocation/json?browser=chromium&sensor=true', function(data) {
               showPosition(data.location.lat, data.location.lng);
-              console.log(position);
-          });
+              console.log(data);
+        });
+    };
+
+    var loadLocalInfo = function(callback){
+        $.get('https://maps.googleapis.com/maps/api/browserlocation/json?browser=chromium&sensor=true', function(data) {
+            var locInfoUrl = "https://maps.googleapis.com/maps/api/geocode/json?browser=chromium&latlng="+data.location.lat+","+data.location.lng+"&sensor=false";
+            //var locInfoUrl = "https://maps.googleapis.com/maps/api/geocode/json?browser=chromium&latlng=40.714224,-73.961452&sensor=false";
+            $.get(locInfoUrl, function(_locInfo){
+               _locInfo = arrTools.arrayColumn(_locInfo.results,"address_components");
+              var lastItem = _locInfo[_locInfo.length-1];
+              var countryNode = lastItem[lastItem.length-1];
+/**
+               for(var i in _locInfo){
+                  _locInfo[i][_locInfo[i].length-1]
+               }
+               **/
+               callback(countryNode);
+            });
+        });
     };
 
     var openSelectMusicFolder = function(){
@@ -296,7 +359,7 @@ function AppViewModel() {
     var loadNewCatalogFromFS = function(){
             bAdm.updateConfig(mainMod.loadedBar(), function(savedConfigDone){
                 if(savedConfigDone){
-                  mainMod.loadingFilesProgress({completed:"0",songTitle:"Reading folder, this might take a while ..."});
+                  mainMod.loadingFilesProgress({completed:"0",songTitle:" "+locale.trans("cat.startloading.msg")});
                   catAdm.getCatalogFromFileSystem(function(onGoingloadMsg){
                       try{
                           if(!onGoingloadMsg.done){
@@ -503,7 +566,7 @@ function AppViewModel() {
           tmpBrowseCat.selectedSong.song.songArtist = songArtist;
           tmpBrowseCat.selectedSong.song.songAlbum = songAlbum2Reas;
         //  tmpBrowseCat.songs.splice(tmpBrowseCat.selectedSong.index,1);
-          genMessageBox("Cambio de posición", "Los cambios de posición de un tema se verá reflejado cuando actualize el catálogo");
+          genMessageBox(locale.trans("cat.changePos.title"), trans("cat.changePos.msg"));
         }
         tmpBrowseCat.songs[tmpBrowseCat.selectedSong.index] = JSON.parse(JSON.stringify(tmpBrowseCat.selectedSong.song));
         loadedCatalogStr[tmpBrowseCat.selectedArtist.name][tmpBrowseCat.selectedAlbum.name][tmpBrowseCat.selectedSong.index] = JSON.parse(JSON.stringify(tmpBrowseCat.selectedSong.song));
@@ -622,7 +685,7 @@ function AppViewModel() {
     var uploadCatalog = function(){
           saveAndRefreshCatalog(function(){
                   var totSongs = 0;
-                  mainMod.genericProgressBar({title:"Subiendo Catálogo",completed:"0"});
+                  mainMod.genericProgressBar({title:locale.trans("cat.uploadCat"),completed:"0"});
                   var getProgBar = mainMod.genericProgressBar();
                   $("#genericProgressBarMod").appendTo("body").modal({backdrop: 'static', keyboard: false});
                   catAdm.sendCat2WutzCloud(function(upStatus){
@@ -759,6 +822,13 @@ function AppViewModel() {
                         _res[i]["lfm_img_url"] = "./img/icon.png";
                         _res[i]["showName"] = true;
                     }
+                    /**
+                    else{
+                      $(".indexPrevSection img").bind('error',function(ev){
+                          $(this).attr('src','./img/icon.png');
+                      }).attr('src',_res[i]["lfm_img_url"]);
+                    }
+                    **/
                     artPicMap[_res[i].name] = _res[i]["lfm_img_url"];
                   }
                   idxPrev.isCatalogLoaded = true;
@@ -766,6 +836,7 @@ function AppViewModel() {
                   mainMod.indexPreview(idxPrev);
                   console.log(mainMod.indexPreview());
                 }
+                window.sessionStorage.setItem("artPicMap",JSON.stringify(artPicMap));
                 catAdm.getPendingPlayList(idCat,dayToken,function(_res2){
                   if(_res2 && _res2.length > 0){
                     for(var i in _res2){
@@ -804,10 +875,10 @@ function AppViewModel() {
         };
         if(!barPar2register.bar_id || !barPar2register.email || !barPar2register.pass || !barPar2register.rep_password ||
            barPar2register.bar_id === "" || barPar2register.email === "" || barPar2register.pass === "" || barPar2register.rep_password === ""){
-            errorMsg += ".- Todos los campos son obligatorios<br/>";
+            errorMsg += locale.trans("form.mandatoryFields")+"<br/>";
         }
         if(barPar2register.pass !== barPar2register.rep_password){
-            errorMsg += ".- El campos de password deben ser iguales<br/>";
+            errorMsg += locale.trans("form.samePassword")+"<br/>";
         }
         if(errorMsg !== ""){
           $("#loadingDiv").hide();
@@ -819,7 +890,7 @@ function AppViewModel() {
                 bAdm.register(barPar2register, function(_res){
                     $("#loadingDiv").hide();
                     if(_res.OK){
-                        genMessageBox("Bar creado!","El id "+_isAval.id+" fue creado con exito. Inicie sesión para continuar con la configuración de este.");
+                        genMessageBox(locale.trans("form.success.title"),locale.trans("form.success.msg",{"user_id":_isAval.id}));
                         mainMod.isJustRegister(true);
                         $("#registerBarModal").modal("hide");
                         $("#idOrMail").val(_isAval.id);
@@ -828,7 +899,7 @@ function AppViewModel() {
               }
               else{
                 $("#loadingDiv").hide();
-                  genMessageBox("Error","El id "+_isAval.id+" ya está usado. Intente de nuevo");
+                  genMessageBox(locale.trans("error"),locale.trans("form.success.msg",{"user_id":_isAval.id}));
               }
           });
         }
@@ -840,7 +911,7 @@ function AppViewModel() {
                loadIndexPreviewInfo();
             }
             else{
-               genMessageBox("Error","El catálogo no pudo ser refrescado. Asegurese que la lista ya no esté vacía e intente nuevamente");
+               genMessageBox(locale.trans("error"),locale.trans("form.catFailed.msg"));
             }
         });
     };
@@ -848,7 +919,7 @@ function AppViewModel() {
     var reqRecPassword = function(){
       var barid = $("#idOrMail").val();
       if(!barid || barid === ""){
-          genMessageBox("","¿Cuál es el id de su bar/evento?");
+          genMessageBox("",locale.trans("form.whichBarEvent"));
           return ;
       }
       bAdm.requestRecPassword(barid ,function(_res){
@@ -856,7 +927,7 @@ function AppViewModel() {
               $("#recoverPassModal").modal("show");
           }
           else{
-             genMessageBox("Error","No se pudo hacer la solicitud. Por favor intente más tarde.");
+             genMessageBox(locale.trans("error"),locale.trans("form.requestFailedTryLater"));
           }
       });
     };
@@ -869,10 +940,10 @@ function AppViewModel() {
         var errorMsg = "";
         if(!barid || !code || !newPass || !newPassRep ||
            barid === "" || code === "" || newPass === "" || newPassRep === ""){
-            errorMsg += ".- Todos los campos son obligatorios<br/>";
+            errorMsg += locale.trans("form.mandatoryFields")+"<br/>";
         }
         if(newPass !== newPassRep){
-            errorMsg += ".- El campos de password deben ser iguales<br/>";
+            errorMsg += locale.trans("form.samePassword")+"<br/>";
         }
         if(errorMsg !== ""){
           genMessageBox("Error",errorMsg);
@@ -880,17 +951,47 @@ function AppViewModel() {
         }
         bAdm.sendNewRecPassword(barid,code,newPass,function(_res){
               if(_res.OK){
-                 genMessageBox("","El password fue cambiado exitosamente. Intente loguearse con su nueva clave.");
+                 genMessageBox("",locale.trans("form.passChanged"));
                  $("#recoverPassModal").modal("hide");
               }
               else if(_res.msg !== "PassNoUpd"){
-                 genMessageBox("Error","El código de reseteo ingresado no es válido.");
+                 genMessageBox("Error",locale.trans("form.resetCodeNotValid"));
               }
               else{
-                 genMessageBox("Error","Ha ocurrido un error al resetear su password. Por favor intente más tarde");
+                 genMessageBox("Error",locale.trans("form.passNotChanged"));
               }
         });
     };
+
+    var toogleFullScreen = function(){
+       console.log("Trying to toogle fullscreen");
+        ipc.sendSync('toogFullScreen');
+        $(document).keyup(function(e) {
+          if (e.keyCode == 27) { // escape key maps to keycode `27`
+              mainMod.toogleFullScreen();
+          }
+         });
+    };
+
+    var closeWutzPlayer = function(){
+         ipc.sendSync('justClose');
+    };
+    var minimizeWindow = function(){
+         ipc.sendSync('minimize');
+    };
+
+    var pickLanguage = function(newLang, callback){
+      mainMod.selectedLang(newLang);
+      localStorage.setItem("loadedLang",newLang);
+      locale.loadWutzTranslator(newLang,"login_reg",function(attr){
+          mainMod.locale(attr);
+          locale.transPageHtml();
+          init();
+          if(callback)
+              callback();
+      });
+    };
+
  //Observable Definitions
 
    // mainMod.playList = ko.observableArray([]);
@@ -923,8 +1024,10 @@ function AppViewModel() {
                                           playlistLoaded:[]});
 
    mainMod.isJustRegister = ko.observable(false);
+   mainMod.languages = ko.observableArray([]);
+   mainMod.selectedLang = ko.observable("");
  //Observable Functions Definitions
-
+  mainMod.locale = ko.observable();
  	mainMod.logOut= logOut;
  	mainMod.loadCatalog= loadCatalog;
  	mainMod.loadLocation= loadLocation;
@@ -955,6 +1058,10 @@ function AppViewModel() {
   mainMod.cleanCatPlaylist = cleanCatPlaylist;
   mainMod.reqRecPassword = reqRecPassword;
   mainMod.sendRecPassword = sendRecPassword;
+  mainMod.toogleFullScreen = toogleFullScreen;
+  mainMod.closeWutzPlayer = closeWutzPlayer;
+  mainMod.minimizeWindow  = minimizeWindow;
+  mainMod.pickLanguage = pickLanguage;
 };
 
 // Activates knockout.js

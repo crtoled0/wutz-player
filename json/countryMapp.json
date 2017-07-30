@@ -1,0 +1,28 @@
+{
+  "countries":{
+      "CL":{"lang":"es"},
+      "AR":{"lang":"es"},
+      "PE":{"lang":"es"},
+      "BO":{"lang":"es"},
+      "CR":{"lang":"es"},
+      "CU":{"lang":"es"},
+      "EC":{"lang":"es"},
+      "PA":{"lang":"es"},
+      "PR":{"lang":"es"},
+      "UR":{"lang":"es"},
+      "VE":{"lang":"es"},
+      "EC":{"lang":"es"},
+      "CO":{"lang":"es"},
+      "US":{"lang":"en"}
+   },
+   "languages":[
+       { "lang":"en",
+         "name":"English",
+         "icon":"./img/en.png"
+       },
+       {"lang":"es",
+         "name":"Español",
+         "icon":"./img/es.png"
+       }
+   ]
+}

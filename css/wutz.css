@@ -232,6 +232,7 @@ table {
     min-height: 300px;
     z-index: 15;
     margin: 4px;
+    overflow-y: hidden;
 }
 
 .songContain .songInfo{
@@ -257,7 +258,6 @@ table {
     width: 100%;
     height: auto;
     opacity: 0.3;
-    overflow: hidden;
 }
 
 .songContain .mainImg{
@@ -319,7 +319,7 @@ audio{
 
 #playerHeader .barInfo{
     margin-top: 30px;
-    color: #5cb85c;
+    color: #ffffff;
 }
 
 #playerHeader .options{
@@ -393,7 +393,7 @@ h2{
 }
 
 .carouselContainer{
-   height: 300px;
+   height: 400px;
 }
 
 #playList{
@@ -408,4 +408,23 @@ h2{
 
 #playList .col-md-2,.col-md-4{
    margin-top: 10px;
+}
+
+.wutzNavBar{
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+}
+
+.wutzNavBar img,span,a{
+  -webkit-app-region: no-drag;
+}
+
+.showHeaderFullScrn {
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 150;
+    background: rgba(00, 00, 00, 0.4);
+    opacity: 0;
 }

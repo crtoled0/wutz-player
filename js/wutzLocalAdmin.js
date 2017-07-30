@@ -1,11 +1,12 @@
 (function($) {
     "use strict";
-    
+
     var catLoaded = false;
     var config = null;
     var bAdm = require('./js/lib/barAdmin');
     var catAdm = require("./js/lib/catalogTools");
     var logger = require('./js/lib/log4Wutz');
+
 	// Options for Message
 	//----------------------------------------------
   var options = {
@@ -31,9 +32,9 @@
     },
   	errorClass: "form-invalid"
   });
-  
+
 	// Form Submission
- 
+
   $("#loginDiv form").submit(function() {
   	remove_loading($("#loginDiv form"));
         var currForm = $(this);
@@ -67,10 +68,10 @@
                     }
       return false;
   });
-  
-  
 
-	
+
+
+
 	// Register Form
 	//----------------------------------------------
 	// Validation
@@ -105,15 +106,15 @@
 	form_loading($("#newBarDiv form"));
         var currForm = $("#newBarDiv form");
         var loginForm = $("#loginDiv form");
-        
+
         var params = {};
         params.bar_id = currForm.find("#barId").val();
         params.pass = currForm.find("#pass").val();
         params.nombreBar = currForm.find("#nombreBar").val();
         params.email = currForm.find("#email").val();
-        
+
         bAdm.register(params,function(result){
-            
+
             remove_loading($("#newBarDiv form"));
             if(result.OK){
                 form_success(loginForm,'Subscribed succesfully, login now');
@@ -135,17 +136,17 @@
     },
   	errorClass: "form-invalid"
   });
-  
+
 	// Form Submission
   $("#forgot-password-form").submit(function() {
   	remove_loading($(this));
-		
+
 		if(options['useAJAX'] === true)
 		{
 			// Dummy AJAX request (Replace this with your AJAX code)
 		  // If you don't want to use AJAX, remove this
   	  dummy_submit_form($(this));
-		
+
 		  // Cancel the normal submission.
 		  // If you don't want to use AJAX, remove this
   	  return false;
@@ -154,7 +155,7 @@
  $("#configDiv form").submit(function() {
   	remove_loading($("#configDiv form"));
         form_loading($("#configDiv form"));
-        
+
         var currForm = $("#configDiv form");
         config.nombreBar = currForm.find("#nombreBar").val();
         config.email = currForm.find("#email").val();
@@ -163,12 +164,12 @@
         config.telefono = currForm.find("#telefono").val();
         config.dayToken = currForm.find("#dayToken").val();
         config.desc = currForm.find("#desc").val();
-        
-        
-        bAdm.saveConfigFile(config,function(_config){             
+
+
+        bAdm.saveConfigFile(config,function(_config){
              config = _config;
              console.log("Config Saved Locally");
-             
+
              	if(!catLoaded){
                     //loadSectionPage("config2");
                     remove_loading($("#configDiv form"));
@@ -192,26 +193,26 @@
                     }
                     document.location.href="./player.html";
                 });
-             
+
          });
   	return false;
-		
+
   });
-  
+
   $("#config2Div form #pickFolder").click(function(){
       var remote = require('remote');
       var dialog = remote.require('electron').dialog;
       var path = dialog.showOpenDialog({
             properties: ['openDirectory']
       });
-      
+
       console.log(path[0]);
       $("#musicPath").val(path[0]);
   });
-  
-  
+
+
   $("#config2Div form").submit(function() {
-  	
+
        // var form = $(this);
         remove_loading($("#config2Div form"));
         form_loading($("#config2Div form"));
@@ -228,21 +229,21 @@
                     if(!onGoingloadMsg.done){
                         var perc = onGoingloadMsg.perc;
                         var song = onGoingloadMsg.song;
-                        $("#catLoadingBox").html("["+perc+"] Loading ... ["+song+"]"); 
+                        $("#catLoadingBox").html("["+perc+"] Loading ... ["+song+"]");
                     }
                     else{
-                        $("#catLoadingBox").html("Local Catalog Loaded"); 
+                        $("#catLoadingBox").html("Local Catalog Loaded");
                         remove_loading($("#config2Div form"));
                     }
                 }catch(err){
                     //logger.info(err);
                 }
             },function(){ //Finish Creating Local Catalog
-                
-                $("#catLoadingBox").html("Uploading Catalog to Wutz Cloud"); 
+
+                $("#catLoadingBox").html("Uploading Catalog to Wutz Cloud");
                 catAdm.sendCat2WutzCloud(function(_config){
                     config = _config;
-                    $("#catLoadingBox").html("Process Finished"); 
+                    $("#catLoadingBox").html("Process Finished");
                     remove_loading($("#config2Div form"));
                     form_success($("#configDiv form"),'Catalog Loaded');
                     checkBarStatusStatus();
@@ -251,9 +252,9 @@
             });
         });
   	return false;
-		
+
   });
-  
+
   var newLat = "";
   var newLon = "";
   $("#config3Div form button").click(function() {
@@ -283,9 +284,9 @@
   function form_loading(fform){
     fform.find('[type=submit]').addClass('clicked').html(options['btn-loading']);
   }
-  
+
   function form_success(fform, msg){
-      
+
       var msg2disp;
        if(options[msg]===undefined){
            msg2disp = msg;
@@ -293,13 +294,13 @@
        else{
            msg2disp = options[msg];
        }
-      
+
 	  fform.find('[type=submit]').addClass('success').html(options['btn-success']);
 	  fform.find('.login-form-main-message').addClass('show success').html(msg2disp);
   }
 
   function form_failed(fform, msg){
-      
+
       var msg2disp;
        if(options[msg]===undefined){
            msg2disp = msg;
@@ -307,26 +308,26 @@
        else{
            msg2disp = options[msg];
        }
-      
+
   	fform.find('[type=submit]').addClass('error').html(options['btn-error']);
   	fform.find('.login-form-main-message').addClass('show error').html(msg2disp);
   }
-  
-  
+
+
   function check4updates(){
-      
+
       console.log("Checking Updates");
       var updMan = require("./js/lib/updatesAdmin");
-      
+
       updMan.checkUpdates(function(res){
           logger.info("We are back" + JSON.stringify(res));
           if(!res.updated){
               var update2Install = res.update2Install;
               $("#topMessageContainer span").html(options['new-upgrade-avail']);
               $("#topMessageContainer #vers2Udt").attr("value",update2Install);
-              
+
               $("#topMessageContainer span").click(function(){
-                  
+
                   $("#topMessageContainer span").html(options['new-upgrade-installing']);
                     updMan.applyUpdates(function(update){
 
@@ -339,7 +340,7 @@
                         else{
                             $("#topMessageContainer span").html(options['new-upgrade-failed']);
                         }
-                        
+
                     });
               });
               $("#topMessageContainer").animate({"top":"0px","height":"30px"},2000);
@@ -355,28 +356,28 @@
   	if($form.valid())
   	{
   		form_loading($form);
-  		
+
   		setTimeout(function() {
   			form_success($form);
   		}, 2000);
   	}
   }
-  
-  //-- INT FUNCTIONS 
+
+  //-- INT FUNCTIONS
   function checkBarStatusStatus(){
-      
+
       console.log("checkstatusbar");
       bAdm.loadNeededFiles(function(_config,isCatLoaded){
           config = _config;
-          
+
           if(config.latitude!==null && config.longitute!==null && config.latitude!=="" && config.longitute!=="")
               showPosition(config.latitude, config.longitute);
           else
               getLocationsMap();
-          
+
           catLoaded = isCatLoaded;
           $.each(config,function(key, value){
-              
+
               var layCont = null;
               if($("#configDiv #"+key) !== undefined)
                   layCont = $("#configDiv #"+key);
@@ -394,29 +395,29 @@
           loadSectionPage('config1');
       });
   }
-  
+
   function runCatalogLoad(){
     catAdm.getCatalogFromFileSystem();
   }
 
 
-  
+
   $("#refreshCurrCat").click(function(){
       catAdm.sendCat2WutzCloud(function(_config){
            config = _config;
-           $("#catLoadingBox").html("Process Finished"); 
+           $("#catLoadingBox").html("Process Finished");
       });
   });
 
   $(document).ready(function() {
-      
+
       check4updates();
       if(window.sessionStorage.getItem("logged"))
           checkBarStatusStatus();
   });
-  
+
     function getLocationsMap() {
-    
+
         if (navigator.geolocation) {
             console.log("Access GEOLOC");
             navigator.geolocation.getCurrentPosition(function(position){
@@ -428,11 +429,11 @@
         }
    // });
    }
-   
-   
+
+
 
    function showPosition(lat, lon) {
-        
+
           console.log(lat + " : "+lon);
           var waiting4GM = window.setInterval(function(){
               if(google){
@@ -454,21 +455,21 @@
                     });
                   // Create the search box and link it to the UI element.
                 var input = document.getElementById('searchLoc');
-                var searchBox = new google.maps.places.SearchBox(input);                
+                var searchBox = new google.maps.places.SearchBox(input);
                 map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-                
-                google.maps.event.addDomListener(input, 'keydown', function(e) { 
-                    if (e.keyCode == 13) { 
-                        e.preventDefault(); 
+
+                google.maps.event.addDomListener(input, 'keydown', function(e) {
+                    if (e.keyCode == 13) {
+                        e.preventDefault();
                     }
-                }); 
-                
+                });
+
                 searchBox.setBounds(map.getBounds());
                 // Bias the SearchBox results towards current map's viewport.
                 map.addListener('bounds_changed', function() {
                   searchBox.setBounds(map.getBounds());
-                });  
-                
+                });
+
                 searchBox.addListener('places_changed', function() {
                     var places = searchBox.getPlaces();
                     if (places.length == 0) {
@@ -482,22 +483,22 @@
                         }
                         newLat = place.geometry.location.lat();
                         newLon = place.geometry.location.lng();
-                       // console.log(place.geometry.location.lat() +" : "+place.geometry.location.lng());                       
+                       // console.log(place.geometry.location.lat() +" : "+place.geometry.location.lng());
                        marker.setPosition(place.geometry.location);
                        map.setCenter(place.geometry.location);
                     });
                 });
-                
-                google.maps.event.addListener(marker, "dragend", function(event) { 
-                        newLat = event.latLng.lat(); 
-                        newLon = event.latLng.lng();                         
+
+                google.maps.event.addListener(marker, "dragend", function(event) {
+                        newLat = event.latLng.lat();
+                        newLon = event.latLng.lng();
                         console.log("Position changed: "+lat + " : "+lng);
                  });
               }
           });
     }
-  
-  
+
+
 })(jQuery);
 
 var sectionMapping = {
@@ -509,12 +510,12 @@ var sectionMapping = {
       'config3':{'id':'config3Div','posy':'-2180'},
        'loaded':'login'
   };
-  
+
   function loadSectionPage(section){
       var obj2Load = sectionMapping[section].id;
       var pos = sectionMapping[section].posy;
       var obj2Unload = sectionMapping[sectionMapping.loaded].id;
-     
+
       /**
       $('#mainContainer').animate({
          top: $("#"+obj2Load).offset().top
@@ -523,9 +524,9 @@ var sectionMapping = {
       $("#mainContainer").animate({'top':pos},2000);
       $("#"+obj2Load).css("visibility", "visible");
       $("#"+obj2Unload).css("visibility", "hidden");
-      
+
       sectionMapping.loaded = section;
-      
+
   }
 
   function loadModalPage(modPage){

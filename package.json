@@ -1,6 +1,6 @@
 {
   "name": "WutzPlayer",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Player for Wutz",
   "main": "main.js",
   "dependencies": {

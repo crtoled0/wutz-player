@@ -42,7 +42,7 @@ var confTemplate = {"bar_id":"",
                     "musicPath":"",
                     "separator":sep,
                     "serverhost":"http://wutz.co.uk",
-                //    "serverhost":"http://localhost:8001/WutzAdmin", // TEMP
+              //      "serverhost":"http://localhost:8001/WutzAdmin", // TEMP
                     "localProwser":"/bwclient/index.html",
                     "androidAppURL":"/apps/Wutz.apk",
                     "downloadAppURL":"https://build.phonegap.com/apps/2149695",

@@ -47,7 +47,6 @@
                    lang2Load = navigator.language || navigator.userLanguage;
                    lang2Load = lang2Load.substring(0,2);
                 }
-								console.log("Locale 2 Load "+"locale/"+lang2Load+".json");
                 $.getJSON( "locale/"+section+lang2Load+".json", function(_jsonAtts) {
 									   //console.log(_jsonAtts);
 										 transMod._attributes = {};
@@ -59,7 +58,6 @@
 
             },
             trans: function(attName,replaceTokens){
-							 console.log("Trying to translate");
                 var transMod = this;
                 var attVal = transMod._attributes[attName];
                 if(!replaceTokens)

@@ -28,7 +28,7 @@
 	    _version : 0.1,
 	    _config : {
 		   wutzAdminHost : 'http://wutz.co.uk'
-		  // wutzAdminHost : 'http://localhost:8001/WutzAdmin'
+		 //  wutzAdminHost : 'http://localhost:8001/WutzAdmin'
 	    },
             callService : function(service,params,method,authToken,callback){
 								if(typeof authToken === "function"){

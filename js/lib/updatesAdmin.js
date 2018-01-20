@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2016 CRTOLEDO.
  *
  * This library is free software; you can redistribute it and/or
@@ -16,13 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-var path = require('path');
+var path = require('path');<
 var ipc = require('electron').ipcRenderer;
 //var localAppPath = ipc.sendSync('getAppPath');
 var localAppPath = path.dirname(process.mainModule.filename);
 //if(ipc.sendSync('isDevMode'))
    // localAppPath = "./";
-    
+
 var fs = require('fs');
 var os = require('os');
 var logger = require('./log4Wutz');
@@ -30,15 +30,15 @@ var tempUpdatePath = os.homedir()+"/.wutz/updates";
 //var userTmpPath = os.homedir()+"/.wutz";
 
 var getRightPlatform = function(){
-    
+
     var arch = os.arch();
     var osType = os.type();
-    
+
     console.log(arch);
     console.log(osType);
-    
+
     var bits = (arch.indexOf("64") !== -1)?"64":"32";
-    
+
     switch(osType){
         case  "Windows_NT":
             return "win"+bits;
@@ -53,11 +53,11 @@ var getRightPlatform = function(){
 };
 
 var checkUpdates = function(callback){
-   
+
    var sys = getRightPlatform();
    console.log(sys);
    window.AjaxWAdmin.callService("getUpdatesVersion/"+sys,null,"GET",function(result){
-      
+
        logger.info("Is there something to Update ? : "+JSON.stringify(result));
        var up = {};
        up.updated=false;
@@ -65,12 +65,12 @@ var checkUpdates = function(callback){
        var lastUpdatedVersion = result["update-version"];
        logger.info("lastUpdatedVersion: "+lastUpdatedVersion);
        logger.info("localVersionPath : "+localVersionPath);
-       
+
       // logger.info("process.env.npm_package_version ["+process.env.npm_package_version+"] ");
        //currUpVersion = process.env.npm_package_version;
-       
+
         if (fs.existsSync(localVersionPath)) {
-           
+
           var upd =  JSON.parse(fs.readFileSync(localVersionPath));
           var currUpVersion =  upd["version"];
           logger.info(currUpVersion);
@@ -82,19 +82,19 @@ var checkUpdates = function(callback){
             window.sessionStorage.setItem("pendUpgrade",JSON.stringify(result));
           }
         }
-        
+
        callback(up);
   });
 };
 
 
 var applyUpdates = function(callback){
-   
+
    var pendUpgrade = JSON.parse(window.sessionStorage.getItem("pendUpgrade"));
-   
+
    console.log(pendUpgrade["content-file"]);
    var fileSize = pendUpgrade.size;
-   
+
   // var fsExtra = require("fs.extra");
    var file_url = 'http://wutznet.com/'+pendUpgrade["content-file"];
    logger.info(file_url);
@@ -105,31 +105,31 @@ var applyUpdates = function(callback){
 
 
 var closeAndOpenInstaller = function(){
-    
-    ipc.sendSync('justClose');
-  
+
+    ipc.sendSync('print2Pdf');
+
   /**
   var exec = require('child_process').execFile;
-      exec(tempUpdatePath+'/installer.exe', function(err, data) {  
+      exec(tempUpdatePath+'/installer.exe', function(err, data) {
             //process.exit();
         });
   **/
-  
+
   //var child = require('child_process');
   //child.fork("D:/WorkP/projects/electron/WutzPlayer/js/jobs/executeUpdateInstaller.js");
   //ipc.sendSync('exitAndRunInstaller');
-  
+
   console.log("Closing Parent");
   //  process.exit(1);
     //logger.info(ress);
     /**
     var exec = require('child_process').execFile;
-    exec(tempUpdatePath+'/installer.exe', function(err, data) {  
+    exec(tempUpdatePath+'/installer.exe', function(err, data) {
         console.log(err);
         console.log(data.toString());
     });
     **/
-    
+
 };
 
 

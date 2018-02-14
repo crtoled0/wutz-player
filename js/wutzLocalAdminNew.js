@@ -131,7 +131,7 @@ function AppViewModel() {
       //---------------------------------------------------------
       //Check if Catalog loaded localy
       bAdm.isThereCatalogFileLoaded(function(_res){
-          if(_res)
+          if(_res) 
             $("#editCatalogBtn").removeClass("disabled");
       });
       //---------------------------------------------

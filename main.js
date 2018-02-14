@@ -85,9 +85,9 @@ app.on('ready', function() {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1300,
                                   height: 625,
-                                  frame: false ,
+                                  frame: true ,
                                   titleBarStyle: 'customButtonsOnHover',
-                                  transparent: true,
+                                  transparent: false,
                                   'web-preferences': {'web-security': false}});
 
   // and load the index.html of the app.
